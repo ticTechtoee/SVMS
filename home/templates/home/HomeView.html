@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Vehicle Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+        }
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background: #343a40;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+        }
+        #sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+        }
+        #sidebar a:hover {
+            background: #495057;
+        }
+        #content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="text-center p-3">
+            <h4>🚗 Vehicle System</h4>
+        </div>
+        <a href="#"><i class="fas fa-home"></i> Home</a>
+        <a href="#"><i class="fas fa-car"></i> Vehicles</a>
+        <a href="#"><i class="fas fa-tools"></i> Maintenance</a>
+        <a href="#"><i class="fas fa-bell"></i> Reminders</a>
+        <a href="#"><i class="fas fa-users"></i> Users</a>
+        <a href="#"><i class="fas fa-cogs"></i> Settings</a>
+        <a href="#"><i class="fas fa-question-circle"></i> FAQs</a>
+        <a href="#"><i class="fas fa-headset"></i> Support</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button class="btn btn-primary" id="toggleSidebar">☰</button>
+                <div class="ms-auto">
+                    <span class="me-3">Welcome, User</span>
+                    <button class="btn btn-outline-danger">Logout</button>
+                </div>
+            </div>
+        </nav>
+        <div class="mt-4">
+            <h2>Dashboard</h2>
+            <p>Welcome to the Smart Vehicle Management System.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("toggleSidebar").addEventListener("click", function() {
+            document.getElementById("sidebar").classList.toggle("d-none");
+        });
+    </script>
+</body>
+</html>
