@@ -8,6 +8,8 @@ urlpatterns = [
     path('', include('home.urls')),
     path('company/', include('companyApp.urls')),
     path('vehicle/', include('vehicleApp.urls')),
+    path('account/', include('accountApp.urls')),
+    path('dashboard/', include('dashboardApp.urls')),
 ]
 # Serve media files during development
 if settings.DEBUG:

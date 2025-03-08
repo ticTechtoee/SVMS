@@ -1,13 +1,24 @@
- <!-- Sidebar -->
- <nav id="sidebar">
+<!-- Sidebar -->
+<nav id="sidebar">
     <div class="text-center p-3">
         <h4>🚗 Vehicle System</h4>
     </div>
     <a href="#"><i class="fas fa-home"></i> Home</a>
-    <a href="#"><i class="fas fa-car"></i> Vehicles</a>
-    <a href="#"><i class="fas fa-tools"></i> Maintenance</a>
+    <a href="{% url 'companyApp:create_company' %}"><i class="fas fa-building"></i> Company</a>
+    <a href="{% url 'vehicleApp:create_vehicle' %}"><i class="fas fa-car"></i> Vehicles</a>
+
+    <!-- Maintenance Dropdown -->
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-tools"></i> Maintenance
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="maintenanceDropdown">
+            <li><a class="dropdown-item" href="{% url 'vehicleApp:maintenance_list' %}"><i class="fas fa-clipboard-list"></i> Maintenance Records</a></li>
+            <li><a class="dropdown-item" href="{% url 'vehicleApp:maintenance_schedule_list' %}"><i class="fas fa-calendar-check"></i> Maintenance Schedules</a></li>
+        </ul>
+    </div>
+
     <a href="#"><i class="fas fa-bell"></i> Reminders</a>
-    <a href="#"><i class="fas fa-building"></i> Company</a>
     <a href="#"><i class="fas fa-users"></i> Users</a>
     <a href="#"><i class="fas fa-cogs"></i> Settings</a>
     <a href="#"><i class="fas fa-question-circle"></i> FAQs</a>

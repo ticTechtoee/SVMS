@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Users</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ users_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Total Companies</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ companies_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Total Vehicles</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ vehicles_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-4">Latest Users</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Date Joined</th></tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr><td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.email }}</td><td>{{ user.date_joined }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Latest Companies</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Address</th><th>Created At</th></tr>
+        </thead>
+        <tbody>
+            {% for company in companies %}
+                <tr><td>{{ company.id }}</td><td>{{ company.name }}</td><td>{{ company.address }}</td><td>{{ company.created_at }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Latest Vehicles</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>ID</th><th>Registration No</th><th>Model</th><th>Manufacturer</th><th>Purchase Date</th></tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ vehicle.id }}</td>
+                    <td>{{ vehicle.registration_number }}</td>
+                    <td>{{ vehicle.model }}</td>
+                    <td>{{ vehicle.manufacturer }}</td>
+                    <td>{{ vehicle.purchase_date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

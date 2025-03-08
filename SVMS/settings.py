@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'companyApp.apps.CompanyappConfig',
     'vehicleApp.apps.VehicleappConfig',
+    'accountApp.apps.AccountappConfig',
+    'dashboardApp.apps.DashboardappConfig',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,22 @@
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Vehicle</button>
-</form>
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4>Create Vehicle</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-success">Create Vehicle</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
