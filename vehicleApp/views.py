@@ -14,9 +14,9 @@ def create_vehicle(request):
         form = VehicleForm(request.POST)
         if form.is_valid():
             vehicle = form.save(commit=False)
-            vehicle.user = request.user  # Automatically assign logged-in user
+            vehicle.user = request.user
             vehicle.save()
-            return redirect('vehicle:list')  # Redirect to vehicle list page (adjust as needed)
+            return redirect('dashboardApp:admin_dashboard')
     else:
         form = VehicleForm()
 

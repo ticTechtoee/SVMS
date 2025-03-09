@@ -35,11 +35,6 @@
                 <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_schedule_list' %}"><i class="fas fa-calendar-check"></i> Schedules</a></li>
             </ul>
         </li>
-
-        <li class="nav-item">
-            <a class="nav-link text-dark" href="#"><i class="fas fa-bell"></i> Reminders</a>
-        </li>
-
         <li class="nav-item">
             <a class="nav-link text-dark" href="#"><i class="fas fa-users"></i> Users</a>
         </li>
@@ -58,6 +53,27 @@
                 <li><a class="nav-link text-dark" href="#"><i class="fas fa-headset"></i> Support</a></li>
             </ul>
         </li>
+       <!-- Reminders Dropdown (Collapsible like Maintenance) -->
+<li class="nav-item">
+    <a class="nav-link dropdown-toggle text-dark" href="#" id="reminderDropdown" data-bs-toggle="collapse" data-bs-target="#reminderMenu">
+        <i class="fas fa-bell"></i> Reminders
+        <span id="reminder-count" class="badge bg-danger">0</span>
+    </a>
+    <ul id="reminderMenu" class="collapse list-unstyled ps-3">
+        {% if reminders %}
+            {% for reminder in reminders %}
+                <li>
+                    <a class="nav-link text-dark" href="{% url 'reminderApp:reminder_list' %}">
+                        🚗 {{ reminder.vehicle.registration_number }} - {{ reminder.get_type_display }}
+                    </a>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li><span class="nav-link text-muted">No reminders</span></li>
+        {% endif %}
+    </ul>
+</li>
+
 
         <!-- User Dropdown -->
         <li class="nav-item">

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'vehicleApp.apps.VehicleappConfig',
     'accountApp.apps.AccountappConfig',
     'dashboardApp.apps.DashboardappConfig',
+    'reminderApp.apps.ReminderappConfig',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'reminderApp.context_processors.reminder_count', # To sohw reminder
             ],
         },
     },

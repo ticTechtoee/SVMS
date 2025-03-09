@@ -23,3 +23,18 @@ body {
     flex: 1;
     padding: 20px;
 }
+/* Match Reminder Dropdown to Maintenance Dropdown */
+#reminderDropdown + .dropdown-menu {
+    background-color: #f8f9fa !important; /* Light gray background like sidebar */
+    border: none !important; /* Remove border */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+/* Style Reminder Dropdown Items */
+#reminderDropdown + .dropdown-menu .dropdown-item {
+    color: #343a40 !important; /* Dark text for better visibility */
+}
+
+#reminderDropdown + .dropdown-menu .dropdown-item:hover {
+    background-color: #e9ecef !important; /* Light hover effect */
+}

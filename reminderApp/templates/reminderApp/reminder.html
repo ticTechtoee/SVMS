@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">📅 Upcoming & Expired Maintenance</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Reminder Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reminder in reminders %}
+                <tr>
+                    <td>{{ reminder.vehicle.registration_number }}</td>
+                    <td>{{ reminder.reminder_date }}</td>
+                    <td>{{ reminder.get_type_display }}</td>
+                    <td>
+                        <span class="badge bg-warning text-dark">{{ reminder.status }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'reminderApp:mark_reminder_completed' reminder.id %}" class="btn btn-success btn-sm">Mark as Done</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No pending reminders</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

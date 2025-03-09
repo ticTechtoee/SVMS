@@ -10,6 +10,7 @@ urlpatterns = [
     path('vehicle/', include('vehicleApp.urls')),
     path('account/', include('accountApp.urls')),
     path('dashboard/', include('dashboardApp.urls')),
+    path('reminder/', include('reminderApp.urls')),
 ]
 # Serve media files during development
 if settings.DEBUG:
