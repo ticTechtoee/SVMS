@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-4">
+    <h2>Service Records</h2>
+
+    <!-- Vehicle Selection Form -->
+    <form method="GET" class="mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="vehicleSelect" class="form-label">Select Vehicle:</label>
+                <select name="vehicle" id="vehicleSelect" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- All Vehicles --</option>
+                    {% for vehicle in vehicles %}
+                        <option value="{{ vehicle.id }}" {% if selected_vehicle_id == vehicle.id|stringformat:"s" %}selected{% endif %}>
+                            {{ vehicle.registration_number }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+
+    {% if selected_vehicle_id %}
+    <!-- Generate Barcode Button -->
+    <div class="mb-3">
+        <a href="{% url 'vehicleApp:generate_vehicle_barcode' selected_vehicle_id %}" class="btn btn-primary">
+            Generate Barcode
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Service Records Table -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Mileage</th>
+                <th>Maintenance Category</th>
+                <th>Main Item</th>
+                <th>Sub Item</th>
+                <th>Service Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.vehicle.registration_number }}</td>
+                    <td>{{ record.mileage_at_service }} km</td>
+                    <td>{{ record.maintenance_category }}</td>
+                    <td>{{ record.main_item }}</td>
+                    <td>{{ record.sub_item }}</td>
+                    <td>{{ record.service_type }}</td>
+                    <td>{{ record.description }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No records found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

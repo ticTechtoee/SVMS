@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <div class="container mt-4">
+        <h2>Maintenance Tasks</h2>
+        <ul class="list-group">
+            {% for task in tasks %}
+                <li class="list-group-item">{{ task.category }} - {{ task }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

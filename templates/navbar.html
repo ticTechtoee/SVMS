@@ -29,10 +29,13 @@
                 <i class="fas fa-tools"></i> Maintenance
             </a>
             <ul id="maintenanceMenu" class="collapse list-unstyled ps-3">
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_record' %}"><i class="fas fa-plus-circle"></i> Add Record</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_schedule' %}"><i class="fas fa-calendar-plus"></i> Schedule</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_list' %}"><i class="fas fa-clipboard-list"></i> Records</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_schedule_list' %}"><i class="fas fa-calendar-check"></i> Schedules</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:select_vehicle_mileage' %}"><i class="fas fa-plus-circle"></i>Add KMs</a></li>
+
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_category' %}"><i class="fas fa-calendar-plus"></i>Add Category</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_task' %}"><i class="fas fa-calendar-plus"></i>Create Task</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:service_record_list' %}"><i class="fas fa-clipboard-list"></i>Records List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i class="fas fa-clipboard-list"></i>Category List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_task_list' %}"><i class="fas fa-calendar-check"></i>Task List</a></li>
             </ul>
         </li>
         <li class="nav-item">
