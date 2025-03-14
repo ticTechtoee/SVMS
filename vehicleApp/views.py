@@ -10,6 +10,12 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import VehicleServiceRecord, Vehicle
 
+import qrcode
+import io
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import VehicleServiceRecord, Vehicle
 
 @login_required
 def create_vehicle(request):
@@ -119,29 +125,45 @@ def service_record_list(request):
         'selected_vehicle_id': selected_vehicle_id
     })
 
+# @login_required
+# def generate_vehicle_barcode(request, vehicle_id):
+#     try:
+#         vehicle = Vehicle.objects.get(id=vehicle_id)
+#         service_records = VehicleServiceRecord.objects.filter(vehicle=vehicle)
+
+#         # Prepare barcode data (vehicle registration + service history)
+#         service_data = f"Vehicle: {vehicle.registration_number}\n"
+#         for record in service_records:
+#             service_data += f"{record.mileage_at_service} km - {record.maintenance_category}\n"
+
+#         # Generate barcode (EAN13 requires a 12-digit number, so we use a hash)
+#         barcode_data = str(abs(hash(service_data)) % (10**12))  # Generate 12-digit unique hash
+#         barcode_class = barcode.get_barcode_class('ean13')
+#         barcode_image = barcode_class(barcode_data, writer=ImageWriter())
+
+#         buffer = io.BytesIO()
+#         barcode_image.write(buffer)
+
+#         return HttpResponse(buffer.getvalue(), content_type="image/png")
+#     except Vehicle.DoesNotExist:
+#         return HttpResponse("Vehicle not found", status=404)
+
 @login_required
-def generate_vehicle_barcode(request, vehicle_id):
-    try:
-        vehicle = Vehicle.objects.get(id=vehicle_id)
-        service_records = VehicleServiceRecord.objects.filter(vehicle=vehicle)
+def generate_vehicle_qr(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    service_records = VehicleServiceRecord.objects.filter(vehicle=vehicle)
 
-        # Prepare barcode data (vehicle registration + service history)
-        service_data = f"Vehicle: {vehicle.registration_number}\n"
-        for record in service_records:
-            service_data += f"{record.mileage_at_service} km - {record.maintenance_category}\n"
+    # Prepare QR code data (vehicle details + service history)
+    qr_data = f"Vehicle: {vehicle.registration_number}\n"
+    for record in service_records:
+        qr_data += f"{record.mileage_at_service} km - {record.maintenance_category}\n"
 
-        # Generate barcode (EAN13 requires a 12-digit number, so we use a hash)
-        barcode_data = str(abs(hash(service_data)) % (10**12))  # Generate 12-digit unique hash
-        barcode_class = barcode.get_barcode_class('ean13')
-        barcode_image = barcode_class(barcode_data, writer=ImageWriter())
+    # Generate QR Code
+    qr = qrcode.make(qr_data)
+    buffer = io.BytesIO()
+    qr.save(buffer, format="PNG")
 
-        buffer = io.BytesIO()
-        barcode_image.write(buffer)
-
-        return HttpResponse(buffer.getvalue(), content_type="image/png")
-    except Vehicle.DoesNotExist:
-        return HttpResponse("Vehicle not found", status=404)
-
+    return HttpResponse(buffer.getvalue(), content_type="image/png")
 
 
 @login_required

@@ -23,13 +23,14 @@
     </form>
 
     {% if selected_vehicle_id %}
-    <!-- Generate Barcode Button -->
+    <!-- Generate QR Code Button -->
     <div class="mb-3">
-        <a href="{% url 'vehicleApp:generate_vehicle_barcode' selected_vehicle_id %}" class="btn btn-primary">
-            Generate Barcode
+        <a href="{% url 'vehicleApp:generate_vehicle_qr' selected_vehicle_id %}" class="btn btn-success">
+            Generate QR Code
         </a>
     </div>
     {% endif %}
+
 
     <!-- Service Records Table -->
     <table class="table table-striped">

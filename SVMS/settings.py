@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'accountApp.apps.AccountappConfig',
     'dashboardApp.apps.DashboardappConfig',
     'reminderApp.apps.ReminderappConfig',
+    'predictionApp.apps.PredictionappConfig',
 ]
 
 MIDDLEWARE = [

@@ -11,6 +11,7 @@ urlpatterns = [
     path('account/', include('accountApp.urls')),
     path('dashboard/', include('dashboardApp.urls')),
     path('reminder/', include('reminderApp.urls')),
+    path('prediction/', include('predictionApp.urls')),
 ]
 # Serve media files during development
 if settings.DEBUG:

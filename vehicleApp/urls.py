@@ -9,7 +9,7 @@ from .views import (
     maintenance_task_list,
     select_vehicle_mileage,
     create_service_record_step2,
-    generate_vehicle_barcode
+    generate_vehicle_qr
 )
 
 app_name = 'vehicleApp'
@@ -19,7 +19,8 @@ urlpatterns = [
     #path('service_record/create/', create_service_record, name='create_service_record'),
     path('select-vehicle/', select_vehicle_mileage, name='select_vehicle_mileage'),
     path('create-service-record/<int:vehicle_id>/<int:mileage>/<int:category_id>/', create_service_record_step2, name='create_service_record_step2'),
-    path('generate-barcode/<int:vehicle_id>/', generate_vehicle_barcode, name='generate_vehicle_barcode'),
+    #path('generate-barcode/<int:vehicle_id>/', generate_vehicle_barcode, name='generate_vehicle_barcode'),
+    path('generate-qr/<int:vehicle_id>/', generate_vehicle_qr, name='generate_vehicle_qr'),
     path('maintenance/category/create/', create_maintenance_category, name='create_maintenance_category'),
     path('maintenance/task/create/', create_maintenance_task, name='create_maintenance_task'),
     path('service_record/list/', service_record_list, name='service_record_list'),

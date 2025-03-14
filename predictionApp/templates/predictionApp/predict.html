@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Predict Next Service Mileage</h4>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="vehicle_id" class="form-label">Select Vehicle</label>
+                    <select name="vehicle_id" class="form-control">
+                        <option value="">-- Select Vehicle --</option>
+                        {% for vehicle in vehicles %}
+                        <option value="{{ vehicle.id }}">{{ vehicle.name }} (ID: {{ vehicle.id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="mileage" class="form-label">Current Mileage</label>
+                    {{ form.mileage }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Predict</button>
+            </form>
+        </div>
+    </div>
+
+    {% if next_service_mileage %}
+    <div class="alert alert-info mt-4">
+        <h5>Prediction Result</h5>
+        <p>The next service is expected at <strong>{{ next_service_mileage }} km</strong>.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}
