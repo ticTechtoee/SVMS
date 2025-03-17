@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success">
+        <h4>Model Training Completed</h4>
+        <p>The prediction model has been successfully trained and saved.</p>
+        <a href="{% url 'predictionApp:predict' %}" class="btn btn-primary">Go to Prediction</a>
+    </div>
+</div>
+{% endblock %}

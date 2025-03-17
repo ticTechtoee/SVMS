@@ -15,7 +15,8 @@
                     <select name="vehicle_id" class="form-control">
                         <option value="">-- Select Vehicle --</option>
                         {% for vehicle in vehicles %}
-                        <option value="{{ vehicle.id }}">{{ vehicle.name }} (ID: {{ vehicle.id }})</option>
+                        <option value="{{ vehicle.id }}">{{ vehicle.registration_number }} (ID: {{ vehicle.id }})</option>
+
                         {% endfor %}
                     </select>
                 </div>

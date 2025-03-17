@@ -10,6 +10,8 @@ from django.http import JsonResponse, HttpResponse
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from vehicleApp.models import VehicleServiceRecord
+from django.contrib.auth.decorators import login_required
+
 
 # Define the model path
 MODEL_PATH = os.path.join(settings.BASE_DIR, "predictionApp", "model.pkl")
@@ -39,6 +41,9 @@ def train_model():
     if X is None or y is None:
         return "No data available for training."
 
+    if X.empty or y.empty:
+        return "Insufficient data for training."
+
     # Train-test split (80-20)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -50,15 +55,27 @@ def train_model():
     joblib.dump(model, MODEL_PATH)
     return "Model trained successfully."
 
+
 def train_model_view(request):
-    """Django view to trigger model training from a web request."""
-    message = train_model()
-    return HttpResponse(message)
+    """Django view to trigger model training and render a success page."""
+    X, y = load_data()
 
+    if X is None or y is None or X.empty or y.empty:
+        return render(request, "predictionApp/training_failed.html", {
+            "message": "No data available for training."
+        })
 
+    # Train-test split (80-20)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+    # Train the model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
 
+    # Save the trained model
+    joblib.dump(model, MODEL_PATH)
 
+    return render(request, "predictionApp/training_success.html")
 
 
 
@@ -66,24 +83,36 @@ def train_model_view(request):
 def predict_next_service(vehicle_id, current_mileage):
     try:
         model = joblib.load(MODEL_PATH)
-        prediction = model.predict([[vehicle_id, current_mileage]])
+        X = pd.DataFrame([[vehicle_id, current_mileage]], columns=["vehicle_id", "mileage"])
+        prediction = model.predict(X)
         return round(prediction[0])
-    except:
-        return "Model not trained yet."
+    except Exception as e:
+        return f"Model not trained yet: {str(e)}"
 
+
+@login_required
 def predict_view(request):
     form = PredictionForm()
     vehicles = Vehicle.objects.all()  # Fetch all vehicles
 
     if request.method == "GET" and "vehicle_id" in request.GET and "mileage" in request.GET:
-        vehicle_id = int(request.GET["vehicle_id"])
-        current_mileage = int(request.GET["mileage"])
-        prediction = predict_next_service(vehicle_id, current_mileage)
-        return render(request, "predictionApp/predict.html", {
-            "form": form,
-            "vehicles": vehicles,
-            "next_service_mileage": prediction
-        })
+        try:
+            vehicle = Vehicle.objects.get(id=int(request.GET["vehicle_id"]))  # Get the vehicle object
+            current_mileage = int(request.GET["mileage"])
+            prediction = predict_next_service(vehicle.id, current_mileage)  # Correct
+
+            return render(request, "predictionApp/predict.html", {
+                "form": form,
+                "vehicles": vehicles,
+                "next_service_mileage": prediction
+            })
+        except Vehicle.DoesNotExist:
+            # Handle case where vehicle ID is invalid
+            return render(request, "predictionApp/predict.html", {
+                "form": form,
+                "vehicles": vehicles,
+                "error": "Selected vehicle does not exist."
+            })
 
     return render(request, "predictionApp/predict.html", {
         "form": form,
