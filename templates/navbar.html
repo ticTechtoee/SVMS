@@ -10,6 +10,13 @@
                 <i class="fas fa-home"></i> Home
             </a>
         </li>
+        {% if request.user.is_superuser %}
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="{% url 'dashboardApp:admin_dashboard' %}">
+                <i class="fa-solid fa-asterisk"></i> Dashboard
+            </a>
+        </li>
+    {% endif %}
 
         <li class="nav-item">
             <a class="nav-link text-dark" href="{% url 'companyApp:create_company' %}">
@@ -29,19 +36,20 @@
                 <i class="fas fa-tools"></i> Maintenance
             </a>
             <ul id="maintenanceMenu" class="collapse list-unstyled ps-3">
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:select_vehicle_mileage' %}"><i class="fas fa-plus-circle"></i>Add KMs</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:select_vehicle_mileage' %}"><i class="fas fa-plus-circle"></i> Add KMs</a></li>
 
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_category' %}"><i class="fas fa-calendar-plus"></i>Add Category</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_task' %}"><i class="fas fa-calendar-plus"></i>Create Task</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:service_record_list' %}"><i class="fas fa-clipboard-list"></i>Records List</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i class="fas fa-clipboard-list"></i>Category List</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_task_list' %}"><i class="fas fa-calendar-check"></i>Task List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_category' %}"><i class="fas fa-calendar-plus"></i> Add Category</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_task' %}"><i class="fas fa-calendar-plus"></i> Create Task</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:service_record_list' %}"><i class="fas fa-clipboard-list"></i> Records List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i class="fas fa-clipboard-list"></i> Category List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_task_list' %}"><i class="fas fa-calendar-check"></i> Task List</a></li>
             </ul>
         </li>
+        {% if request.user.is_superuser %}
         <li class="nav-item">
-            <a class="nav-link text-dark" href="#"><i class="fas fa-users"></i> Users</a>
+            <a class="nav-link text-dark" href="{% url 'home:UserDetailView' %}"><i class="fas fa-users"></i> Users</a>
         </li>
-
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link text-dark" href="#"><i class="fas fa-cogs"></i> Settings</a>
         </li>

@@ -16,6 +16,7 @@ class Reminder(models.Model):
     reminder_date = models.DateField()
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    description = models.TextField(blank=True, null=True)  # ✅ ADD THIS
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

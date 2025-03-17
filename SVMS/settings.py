@@ -1,7 +1,20 @@
-
 from pathlib import Path
 import os
 import mimetypes
+from django.urls import reverse_lazy
+
+# Redirect unauthenticated users to this URL when they try to access protected pages
+LOGIN_URL = reverse_lazy('accountApp:login')  # Change this to the actual name of your login view
+
+# After login, redirect users to their dashboard or home page
+LOGIN_REDIRECT_URL = reverse_lazy('home:HomeView')  # Change this to your desired landing page
+
+# After logout, redirect users back to the login page
+LOGOUT_REDIRECT_URL = reverse_lazy('accountApp:login')
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

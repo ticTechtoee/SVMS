@@ -32,46 +32,48 @@
         </div>
     </div>
 
-    <h3 class="mt-4">Latest Users</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr><th>ID</th><th>Username</th><th>Email</th><th>Date Joined</th></tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-                <tr><td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.email }}</td><td>{{ user.date_joined }}</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- New Maintenance Summary Section -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header">Total Maintenance Records</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ maintenance_count }}</h3>
+                </div>
+            </div>
+        </div>
 
-    <h3 class="mt-4">Latest Companies</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr><th>ID</th><th>Name</th><th>Address</th><th>Created At</th></tr>
-        </thead>
-        <tbody>
-            {% for company in companies %}
-                <tr><td>{{ company.id }}</td><td>{{ company.name }}</td><td>{{ company.address }}</td><td>{{ company.created_at }}</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Users Who Performed Maintenance</div>
+                <div class="card-body">
+                    <h3 class="card-title">{{ maintenance_users_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h3 class="mt-4">Latest Vehicles</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr><th>ID</th><th>Registration No</th><th>Model</th><th>Manufacturer</th><th>Purchase Date</th></tr>
-        </thead>
-        <tbody>
+    <!-- Dropdown to select vehicle -->
+    <form method="GET" class="mb-3">
+        <label for="vehicle">Select Vehicle:</label>
+        <select name="vehicle_id" id="vehicle" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Select Vehicle --</option>
             {% for vehicle in vehicles %}
-                <tr>
-                    <td>{{ vehicle.id }}</td>
-                    <td>{{ vehicle.registration_number }}</td>
-                    <td>{{ vehicle.model }}</td>
-                    <td>{{ vehicle.manufacturer }}</td>
-                    <td>{{ vehicle.purchase_date }}</td>
-                </tr>
+                <option value="{{ vehicle.id }}" {% if vehicle.id|stringformat:"s" == selected_vehicle %}selected{% endif %}>
+                    {{ vehicle.registration_number }} - {{ vehicle.model }}
+                </option>
             {% endfor %}
-        </tbody>
-    </table>
+        </select>
+    </form>
+
+    {% if selected_vehicle %}
+    <div class="card text-white bg-secondary mb-3">
+        <div class="card-header">Maintenance Records for Selected Vehicle</div>
+        <div class="card-body">
+            <h3 class="card-title">{{ selected_maintenance_count }}</h3>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

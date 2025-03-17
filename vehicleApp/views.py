@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceCategory, MaintenanceTask
 from .forms import VehicleForm, VehicleServiceRecordForm, MaintenanceCategoryForm, MaintenanceTaskForm, VehicleMileageForm
 import io
-import barcode
-from barcode.writer import ImageWriter
+
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
