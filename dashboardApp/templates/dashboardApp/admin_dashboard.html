@@ -71,9 +71,12 @@
         <div class="card-header">Maintenance Records for Selected Vehicle</div>
         <div class="card-body">
             <h3 class="card-title">{{ selected_maintenance_count }}</h3>
+            <a href="{% url 'dashboardApp:vehicle_maintenance_detail' selected_vehicle %}" class="text-white">(View Details) </a>
         </div>
     </div>
     {% endif %}
+
+
 
 </div>
 {% endblock %}

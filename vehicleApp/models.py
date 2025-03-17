@@ -91,7 +91,6 @@ class MaintenanceTask(models.Model):
         return f"{self.category} - {self.main_item} - {self.sub_item} ({self.service_type})"
 
 
-# When a vehicle is serviced, the mechanic selects performed tasks
 class VehicleServiceRecord(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     mileage_at_service = models.IntegerField()
@@ -108,6 +107,7 @@ class VehicleServiceRecord(models.Model):
         ServiceType, on_delete=models.CASCADE, related_name="service_records"
     )
     description = models.TextField(blank=True, null=True)
+    mechanic = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # New field
 
     def __str__(self):
-        return f"{self.vehicle.registration_number} - {self.mileage_at_service} km"
+        return f"{self.vehicle.registration_number} - {self.mileage_at_service} km - {self.mechanic.username if self.mechanic else 'Unknown'}"

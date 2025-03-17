@@ -1,3 +1,4 @@
+from .models import Vehicle, MaintenanceCategory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceCategory, MaintenanceTask
@@ -65,15 +66,15 @@ def select_vehicle_mileage(request):
 
 @login_required
 def create_service_record_step2(request, vehicle_id, mileage, category_id):
-    from .models import Vehicle, MaintenanceCategory
-
     vehicle = Vehicle.objects.get(id=vehicle_id)
     maintenance_category = MaintenanceCategory.objects.get(id=category_id) if category_id != 0 else None
 
     if request.method == "POST":
         form = VehicleServiceRecordForm(request.POST)
         if form.is_valid():
-            form.save()
+            service_record = form.save(commit=False)
+            service_record.mechanic = request.user  # Automatically assign the logged-in user
+            service_record.save()
             return redirect('vehicleApp:service_record_list')  # Redirect to list page
 
     else:
@@ -84,6 +85,7 @@ def create_service_record_step2(request, vehicle_id, mileage, category_id):
         })
 
     return render(request, 'vehicleApp/create_service_record.html', {'form': form})
+
 
 
 @login_required

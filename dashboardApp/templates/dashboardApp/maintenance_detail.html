@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Maintenance Records for {{ vehicle.registration_number }}</h4>
+        </div>
+        <div class="card-body">
+            {% if maintenance_records %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Mileage at Service</th>
+                            <th>Category</th>
+                            <th>Main Item</th>
+                            <th>Sub Item</th>
+                            <th>Service Type</th>
+                            <th>Description</th>
+                            <th>Performed By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in maintenance_records %}
+                        <tr>
+                            <td>{{ record.mileage_at_service }} km</td>
+                            <td>{{ record.maintenance_category }}</td>
+                            <td>{{ record.main_item }}</td>
+                            <td>{{ record.sub_item }}</td>
+                            <td>{{ record.service_type }}</td>
+                            <td>{{ record.description }}</td>
+                            <td>{{ record.mechanic.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No maintenance records found for this vehicle.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

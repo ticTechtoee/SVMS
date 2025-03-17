@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from companyApp.models import Company
 from vehicleApp.models import Vehicle
 from vehicleApp.models import VehicleServiceRecord  # Import maintenance records
+from django.shortcuts import render, get_object_or_404
+from vehicleApp.models import Vehicle, VehicleServiceRecord
+
+
 
 @login_required
 def admin_dashboard(request):
@@ -41,3 +45,18 @@ def admin_dashboard(request):
     }
 
     return render(request, 'dashboardApp/admin_dashboard.html', context)
+
+
+
+def vehicle_maintenance_detail(request, vehicle_id):
+    print(vehicle_id)
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    maintenance_records = VehicleServiceRecord.objects.filter(vehicle=vehicle).select_related(
+        'maintenance_category', 'main_item', 'sub_item', 'service_type', 'vehicle__user'
+    )
+
+    context = {
+        'vehicle': vehicle,
+        'maintenance_records': maintenance_records,
+    }
+    return render(request, 'dashboardApp/maintenance_detail.html', context)
