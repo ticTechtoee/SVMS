@@ -46,9 +46,14 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-dark" href="{% url 'vehicleApp:create_vehicle' %}">
-                <i class="fas fa-car"></i> Vehicles
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="maintenanceDropdown" data-bs-toggle="collapse" data-bs-target="#vehicleMenu">
+                <i class="fas fa-car"></i> Vehicle
             </a>
+            <ul id="vehicleMenu" class="collapse list-unstyled ps-3">
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_vehicle' %}"><i class="fas fa-plus-circle"></i> Add Vehicle</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:vehicle_list' %}"><i class="fas fa-calendar-plus"></i> List Vehicle</a></li>
+
+            </ul>
         </li>
 
         <!-- Maintenance Dropdown -->
@@ -103,6 +108,7 @@
         {% else %}
             <li><span class="nav-link text-muted">No reminders</span></li>
         {% endif %}
+        <li><a class="nav-link text-dark" href="{% url 'reminderApp:vehicle_expiry_notifications' %}"><i class="fas fa-calendar-plus"></i> Vehicle Expiry</a></li>
     </ul>
 </li>
 

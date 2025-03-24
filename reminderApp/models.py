@@ -19,6 +19,8 @@ class Reminder(models.Model):
     description = models.TextField(blank=True, null=True)  # ✅ ADD THIS
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.vehicle} - {self.type} ({self.status})"

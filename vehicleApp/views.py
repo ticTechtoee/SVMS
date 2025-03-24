@@ -2,7 +2,7 @@ from .models import Vehicle, MaintenanceCategory
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceCategory, MaintenanceTask
-from .forms import VehicleForm, VehicleServiceRecordForm, MaintenanceCategoryForm, MaintenanceTaskForm, VehicleMileageForm
+from .forms import VehicleForm, VehicleServiceRecordForm, MaintenanceCategoryForm, MaintenanceTaskForm, VehicleMileageForm, VehicleExpiryUpdateForm
 import io
 
 
@@ -26,11 +26,39 @@ def create_vehicle(request):
             vehicle = form.save(commit=False)
             vehicle.user = request.user
             vehicle.save()
-            return redirect('dashboardApp:admin_dashboard')  # Redirect to the admin dashboard
+            return redirect('vehicleApp:vehicle_list')  # Redirect to the vehicle dashboard
     else:
         form = VehicleForm()
 
     return render(request, 'vehicleApp/create_vehicle.html', {'form': form})
+
+
+
+@login_required
+def vehicle_list(request):
+    vehicles = Vehicle.objects.all()  # Get all vehicles
+    return render(request, 'vehicleApp/vehicle_list.html', {'vehicles': vehicles})
+
+
+
+
+@login_required
+def update_vehicle_expiry(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    if request.method == "POST":
+        form = VehicleExpiryUpdateForm(request.POST, instance=vehicle)
+        if form.is_valid():
+            form.save()
+            return redirect('vehicleApp:vehicle_list')  # Redirect back to the list
+
+    else:
+        form = VehicleExpiryUpdateForm(instance=vehicle)
+
+    return render(request, 'vehicleApp/update_vehicle_expiry.html', {'form': form, 'vehicle': vehicle})
+
+
+
 
 @login_required
 def select_vehicle_mileage(request):

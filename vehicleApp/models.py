@@ -1,9 +1,9 @@
 from django.db import models
 from companyApp.models import Company
 from django.contrib.auth.models import User
+from django.utils.timezone import now
+from datetime import timedelta
 
-
-# Vehicle Model
 class Vehicle(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -11,9 +11,19 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=50)
     manufacturer = models.CharField(max_length=50)
     purchase_date = models.DateField()
+    expiry_date = models.DateField()
     is_active = models.BooleanField(default=True)
+    near_expiry_notified = models.BooleanField(default=False)  # ✅ New Field to Track Notifications
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def is_near_expiry(self):
+        """Check if the vehicle is within 15 days of expiry."""
+        return self.expiry_date - timedelta(days=15) <= now().date() <= self.expiry_date
+
+    def is_expired(self):
+        """Check if the vehicle is expired."""
+        return self.expiry_date < now().date()
 
     def __str__(self):
         return self.registration_number
