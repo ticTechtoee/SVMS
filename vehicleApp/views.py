@@ -1,7 +1,7 @@
-from .models import Vehicle, MaintenanceCategory
+from .models import Vehicle, MaintenanceType
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Vehicle, VehicleServiceRecord, MaintenanceCategory, MaintenanceTask
+from .models import Vehicle, VehicleServiceRecord, MaintenanceType, MaintenanceTask
 from .forms import VehicleForm, VehicleServiceRecordForm, MaintenanceCategoryForm, MaintenanceTaskForm, VehicleMileageForm, VehicleExpiryUpdateForm
 import io
 
@@ -69,7 +69,7 @@ def select_vehicle_mileage(request):
             mileage = form.cleaned_data['mileage_at_service']
 
             # Find the closest matching maintenance category based on mileage
-            maintenance_category = MaintenanceCategory.objects.filter(
+            maintenance_category = MaintenanceType.objects.filter(
                 kilometer__lte=mileage
             ).order_by('-kilometer').first()  # Get the closest lower or equal match
 
@@ -80,22 +80,11 @@ def select_vehicle_mileage(request):
 
     return render(request, 'vehicleApp/select_vehicle_mileage.html', {'form': form})
 
-# @login_required
-# def create_service_record(request):
-#     if request.method == "POST":
-#         form = VehicleServiceRecordForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('vehicleApp:service_record_list')  # Redirect to service record list
-#     else:
-#         form = VehicleServiceRecordForm()
-
-#     return render(request, 'vehicleApp/create_service_record.html', {'form': form})
 
 @login_required
 def create_service_record_step2(request, vehicle_id, mileage, category_id):
     vehicle = Vehicle.objects.get(id=vehicle_id)
-    maintenance_category = MaintenanceCategory.objects.get(id=category_id) if category_id != 0 else None
+    maintenance_category = MaintenanceType.objects.get(id=category_id) if category_id != 0 else None
 
     if request.method == "POST":
         form = VehicleServiceRecordForm(request.POST)
@@ -155,28 +144,6 @@ def service_record_list(request):
         'selected_vehicle_id': selected_vehicle_id
     })
 
-# @login_required
-# def generate_vehicle_barcode(request, vehicle_id):
-#     try:
-#         vehicle = Vehicle.objects.get(id=vehicle_id)
-#         service_records = VehicleServiceRecord.objects.filter(vehicle=vehicle)
-
-#         # Prepare barcode data (vehicle registration + service history)
-#         service_data = f"Vehicle: {vehicle.registration_number}\n"
-#         for record in service_records:
-#             service_data += f"{record.mileage_at_service} km - {record.maintenance_category}\n"
-
-#         # Generate barcode (EAN13 requires a 12-digit number, so we use a hash)
-#         barcode_data = str(abs(hash(service_data)) % (10**12))  # Generate 12-digit unique hash
-#         barcode_class = barcode.get_barcode_class('ean13')
-#         barcode_image = barcode_class(barcode_data, writer=ImageWriter())
-
-#         buffer = io.BytesIO()
-#         barcode_image.write(buffer)
-
-#         return HttpResponse(buffer.getvalue(), content_type="image/png")
-#     except Vehicle.DoesNotExist:
-#         return HttpResponse("Vehicle not found", status=404)
 
 @login_required
 def generate_vehicle_qr(request, vehicle_id):
@@ -198,7 +165,7 @@ def generate_vehicle_qr(request, vehicle_id):
 
 @login_required
 def maintenance_category_list(request):
-    categories = MaintenanceCategory.objects.all()
+    categories = MaintenanceType.objects.all()
     return render(request, 'vehicleApp/maintenance_category_list.html', {'categories': categories})
 
 

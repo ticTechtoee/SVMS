@@ -1,6 +1,6 @@
 from django import forms
 from .models import (
-    Vehicle, VehicleServiceRecord, MaintenanceCategory, MaintenanceTask,
+    Vehicle, VehicleServiceRecord, MaintenanceType, MaintenanceTask,
     InspectionItem, SubInspectionItem, ServiceType
 )
 from companyApp.models import Company
@@ -34,7 +34,7 @@ class VehicleExpiryUpdateForm(forms.ModelForm):
 # Maintenance Category Form
 class MaintenanceCategoryForm(forms.ModelForm):
     class Meta:
-        model = MaintenanceCategory
+        model = MaintenanceType
         fields = ['name', 'kilometer', 'description']
         widgets = {
             'name': forms.Select(attrs={'class': 'form-control'}),
@@ -79,9 +79,9 @@ class ServiceTypeForm(forms.ModelForm):
 class MaintenanceTaskForm(forms.ModelForm):
     class Meta:
         model = MaintenanceTask
-        fields = ['category', 'main_item', 'sub_item', 'service_type', 'description']
+        fields = ['maintenance_type', 'main_item', 'sub_item', 'service_type', 'description']
         widgets = {
-            'category': forms.Select(attrs={'class': 'form-control'}),
+            'maintenance_type': forms.Select(attrs={'class': 'form-control'}),
             'main_item': forms.Select(attrs={'class': 'form-control'}),
             'sub_item': forms.Select(attrs={'class': 'form-control'}),
             'service_type': forms.Select(attrs={'class': 'form-control'}),
@@ -97,29 +97,15 @@ class VehicleMileageForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Mileage'})
     )
 
-# # Vehicle Service Record Form
-# class VehicleServiceRecordForm(forms.ModelForm):
-#     class Meta:
-#         model = VehicleServiceRecord
-#         fields = ['vehicle', 'mileage_at_service', 'maintenance_category', 'main_item', 'sub_item', 'service_type', 'description']
-#         widgets = {
-#             'vehicle': forms.Select(attrs={'class': 'form-control'}),
-#             'mileage_at_service': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Mileage'}),
-#             'maintenance_category': forms.Select(attrs={'class': 'form-control'}),
-#             'main_item': forms.Select(attrs={'class': 'form-control'}),
-#             'sub_item': forms.Select(attrs={'class': 'form-control'}),
-#             'service_type': forms.Select(attrs={'class': 'form-control'}),
-#             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter Service Description'}),
-#         }
 
 class VehicleServiceRecordForm(forms.ModelForm):
     class Meta:
         model = VehicleServiceRecord
-        fields = ['vehicle', 'mileage_at_service', 'maintenance_category', 'main_item', 'sub_item', 'service_type', 'description']
+        fields = ['vehicle', 'mileage_at_service', 'maintenance_type', 'main_item', 'sub_item', 'service_type', 'description']
         widgets = {
             'vehicle': forms.Select(attrs={'class': 'form-control'}),
             'mileage_at_service': forms.NumberInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
-            'maintenance_category': forms.Select(attrs={'class': 'form-control'}),
+            'maintenance_type': forms.Select(attrs={'class': 'form-control'}),
             'main_item': forms.Select(attrs={'class': 'form-control'}),
             'sub_item': forms.Select(attrs={'class': 'form-control'}),
             'service_type': forms.Select(attrs={'class': 'form-control'}),
