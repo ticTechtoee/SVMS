@@ -12,10 +12,7 @@ class Vehicle(models.Model):
     manufacturer = models.CharField(max_length=50)
     purchase_date = models.DateField()
     expiry_date = models.DateField()
-    is_active = models.BooleanField(default=True)
     near_expiry_notified = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def is_near_expiry(self):
         return self.expiry_date - timedelta(days=15) <= now().date() <= self.expiry_date
@@ -69,7 +66,7 @@ class ServiceType(models.Model):
         ('I', 'Inspect'),
         ('A', 'Adjust'),
         ('C', 'Clean'),
-        ('T', 'Test'),
+        ('T', 'Tight'),
         ('L', 'Lubricate'),
     ]
     code = models.CharField(max_length=1, choices=SERVICE_CHOICES, unique=True)

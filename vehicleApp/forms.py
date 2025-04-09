@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 class VehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle
-        fields = ['company', 'user', 'registration_number', 'model', 'manufacturer', 'purchase_date', 'expiry_date', 'is_active']
+        fields = ['company', 'user', 'registration_number', 'model', 'manufacturer', 'purchase_date', 'expiry_date']
         widgets = {
             'company': forms.Select(attrs={'class': 'form-control'}),
             'user': forms.Select(attrs={'class': 'form-control'}),
@@ -20,7 +20,7 @@ class VehicleForm(forms.ModelForm):
             'manufacturer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Manufacturer'}),
             'purchase_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'expiry_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
         }
 
 class VehicleExpiryUpdateForm(forms.ModelForm):
