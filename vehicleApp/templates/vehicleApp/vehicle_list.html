@@ -9,6 +9,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>Registration Number</th>
+                    <th>Company</th>
                     <th>Model</th>
                     <th>Manufacturer</th>
                     <th>Purchase Date</th>
@@ -20,6 +21,7 @@
                 {% for vehicle in vehicles %}
                 <tr>
                     <td>{{ vehicle.registration_number }}</td>
+                    <td>{{ vehicle.company }}</td>
                     <td>{{ vehicle.model }}</td>
                     <td>{{ vehicle.manufacturer }}</td>
                     <td>{{ vehicle.purchase_date }}</td>

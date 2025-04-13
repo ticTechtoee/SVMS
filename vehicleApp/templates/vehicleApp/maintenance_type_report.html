@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Maintenance Type Report</h2>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label for="maintenanceTypeSelect" class="form-label">Select Maintenance Type</label>
+            <select name="maintenance_type" id="maintenanceTypeSelect" class="form-select" required>
+                <option value="">-- Choose --</option>
+                {% for type in maintenance_types %}
+                    <option value="{{ type.id }}" {% if selected_type_id == type.id %}selected{% endif %}>
+                        {{ type.get_name_display }} ({{ type.kilometer }} km)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary" name="action" value="generate">Generate Report</button>
+        </div>
+
+        {% if selected_type_id %}
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-success" name="export" value="true">Export to Excel</button>
+        </div>
+        {% endif %}
+    </form>
+
+
+    {% if records %}
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Created By</th>
+                <th>Company</th>
+                <th>Mileage</th>
+                <th>Main Item</th>
+                <th>Sub Item</th>
+                <th>Service Type</th>
+                <th>Mechanic</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.vehicle.registration_number }}</td>
+                <td>{{ record.vehicle.user.username }}</td>
+                <td>{{ record.vehicle.company.name }}</td>
+                <td>{{ record.mileage_at_service }} km</td>
+                <td>{{ record.main_item.name }}</td>
+                <td>{{ record.sub_item.name }}</td>
+                <td>{{ record.service_type.get_code_display }}</td>
+                <td>{{ record.mechanic.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif selected_type_id %}
+        <div class="alert alert-warning">No service records found for this Maintenance Type.</div>
+    {% endif %}
+</div>
+{% endblock %}

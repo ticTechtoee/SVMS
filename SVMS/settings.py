@@ -2,6 +2,11 @@ from pathlib import Path
 import os
 import mimetypes
 from django.urls import reverse_lazy
+import environ
+
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Redirect unauthenticated users to this URL when they try to access protected pages
 LOGIN_URL = reverse_lazy('accountApp:login')  # Change this to the actual name of your login view
@@ -153,3 +158,13 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

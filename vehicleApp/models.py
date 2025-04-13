@@ -42,10 +42,12 @@ class MaintenanceType(models.Model):
 
 # Main Inspection Items
 class InspectionItem(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    maintenance_type = models.ForeignKey('MaintenanceType', on_delete=models.CASCADE, related_name="inspection_items")
+    name = models.CharField(max_length=500)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.maintenance_type.get_name_display()})"
+
 
 
 # Sub-Items under each Main Inspection Item
@@ -53,7 +55,7 @@ class SubInspectionItem(models.Model):
     main_item = models.ForeignKey(
         InspectionItem, on_delete=models.CASCADE, related_name="sub_items"
     )
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=500)
 
     def __str__(self):
         return f"{self.name} ({self.main_item.name})"

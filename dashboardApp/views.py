@@ -22,8 +22,8 @@ def admin_dashboard(request):
 
 
     users = User.objects.all().order_by('-date_joined')[:5]
-    companies = Company.objects.all().order_by('-created_at')[:5]
-    vehicles = Vehicle.objects.all().order_by('-created_at')[:5]
+    companies = Company.objects.all().order_by('-name')[:5]
+    vehicles = Vehicle.objects.all().order_by('-purchase_date')[:5]
 
     selected_vehicle = request.GET.get('vehicle_id')  # Get vehicle from dropdown
     if selected_vehicle:
@@ -52,7 +52,7 @@ def vehicle_maintenance_detail(request, vehicle_id):
     print(vehicle_id)
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
     maintenance_records = VehicleServiceRecord.objects.filter(vehicle=vehicle).select_related(
-        'maintenance_category', 'main_item', 'sub_item', 'service_type', 'vehicle__user'
+        'maintenance_type', 'main_item', 'sub_item', 'service_type', 'vehicle__user'
     )
 
     context = {

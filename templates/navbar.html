@@ -10,13 +10,22 @@
                 <i class="fas fa-home"></i> Home
             </a>
         </li>
-        {% if request.user.is_superuser %}
-        <li class="nav-item">
-            <a class="nav-link text-dark" href="{% url 'dashboardApp:admin_dashboard' %}">
-                <i class="fa-solid fa-asterisk"></i> Dashboard
-            </a>
-        </li>
-    {% endif %}
+  <!-- Maintenance Dropdown -->
+{% if request.user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link dropdown-toggle text-dark" href="#" id="maintenanceDropdown" data-bs-toggle="collapse" data-bs-target="#DashboardMenu">
+        <i class="fa fa-circle"></i> Dashboard
+    </a>
+    <ul id="DashboardMenu" class="collapse list-unstyled ps-3">
+        <li> <a class="nav-link text-dark" href="{% url 'dashboardApp:admin_dashboard' %}">Dashboard</a></li>
+        <li> <a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_type_report' %}">Report</a></li>
+
+    </ul>
+</li>
+{% endif %}
+
+
+
 
     {% if request.user.is_superuser %}
      <!-- AI Model Dropdown -->
@@ -38,13 +47,13 @@
 
 
 
-
+{% if user.is_admin %}
         <li class="nav-item">
             <a class="nav-link text-dark" href="{% url 'companyApp:create_company' %}">
                 <i class="fas fa-building"></i> Company
             </a>
         </li>
-
+{% endif %}
         <li class="nav-item">
             <a class="nav-link dropdown-toggle text-dark" href="#" id="maintenanceDropdown" data-bs-toggle="collapse" data-bs-target="#vehicleMenu">
                 <i class="fas fa-car"></i> Vehicle
@@ -64,13 +73,17 @@
             <ul id="maintenanceMenu" class="collapse list-unstyled ps-3">
                 <li><a class="nav-link text-dark" href="{% url 'vehicleApp:select_vehicle_mileage' %}"><i class="fas fa-plus-circle"></i> Add KMs</a></li>
 
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_category' %}"><i class="fas fa-calendar-plus"></i> Add Category</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_task' %}"><i class="fas fa-calendar-plus"></i> Create Task</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_maintenance_category' %}"><i class="fas fa-calendar-plus"></i> Add Type</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_inspection_item' %}"><i class="fas fa-calendar-plus"></i> Add Inspection</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_sub_inspection_item' %}"><i class="fas fa-calendar-plus"></i> Add Sub Inspection</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:create_service_type' %}"><i class="fas fa-calendar-plus"></i> Add Service Type</a></li>
+
                 <li><a class="nav-link text-dark" href="{% url 'vehicleApp:service_record_list' %}"><i class="fas fa-clipboard-list"></i> Records List</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i class="fas fa-clipboard-list"></i> Category List</a></li>
-                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_task_list' %}"><i class="fas fa-calendar-check"></i> Task List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i class="fas fa-clipboard-list"></i> Type List</a></li>
+
             </ul>
         </li>
+
         {% if request.user.is_superuser %}
         <li class="nav-item">
             <a class="nav-link text-dark" href="{% url 'home:UserDetailView' %}"><i class="fas fa-users"></i> Users</a>
@@ -121,10 +134,14 @@
             <ul id="userMenu" class="collapse list-unstyled ps-3">
                 {% if user.is_authenticated %}
                     <li><span class="nav-link fw-bold">Welcome, {{ user.username }}</span></li>
+                    {% if user.is_superuser %}
+                    <li><a class="nav-link text-dark" href="{% url 'accountApp:create_employee' %}"><i class="fas fa-sign-in-alt"></i> Create Employee</a></li>
+
+                    {% endif %}
                     <li><a class="nav-link text-dark" href="{% url 'accountApp:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 {% else %}
                     <li><a class="nav-link text-dark" href="{% url 'accountApp:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                    <li><a class="nav-link text-dark" href="{% url 'accountApp:signup' %}"><i class="fas fa-user-plus"></i> Signup</a></li>
+
                 {% endif %}
             </ul>
         </li>
