@@ -11,7 +11,7 @@
             </a>
         </li>
   <!-- Maintenance Dropdown -->
-{% if request.user.is_superuser %}
+
 <li class="nav-item">
     <a class="nav-link dropdown-toggle text-dark" href="#" id="maintenanceDropdown" data-bs-toggle="collapse" data-bs-target="#DashboardMenu">
         <i class="fa fa-circle"></i> Dashboard
@@ -22,7 +22,7 @@
 
     </ul>
 </li>
-{% endif %}
+
 
 
 
@@ -47,7 +47,7 @@
 
 
 
-{% if user.is_admin %}
+{% if user.is_superuser %}
         <li class="nav-item">
             <a class="nav-link text-dark" href="{% url 'companyApp:create_company' %}">
                 <i class="fas fa-building"></i> Company
