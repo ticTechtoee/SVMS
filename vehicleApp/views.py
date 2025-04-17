@@ -1,7 +1,7 @@
 from .models import Vehicle, MaintenanceType
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Vehicle, VehicleServiceRecord, MaintenanceType, MaintenanceTask
+from .models import Vehicle, VehicleServiceRecord, MaintenanceType
 from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm
 import io
 
@@ -134,20 +134,6 @@ def create_service_record_step2(request, vehicle_id, mileage, category_id):
 
 
 
-
-# @login_required
-# def create_maintenance_task(request):
-#     if request.method == "POST":
-#         form = MaintenanceTaskForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('vehicleApp:maintenance_task_list')  # Redirect to task list
-#     else:
-#         form = MaintenanceTaskForm()
-
-#     return render(request, 'vehicleApp/create_maintenance_task.html', {'form': form})
-
-
 @login_required
 def service_record_list(request):
     vehicles = Vehicle.objects.all()
@@ -185,11 +171,6 @@ def maintenance_category_list(request):
     categories = MaintenanceType.objects.all()
     return render(request, 'vehicleApp/maintenance_category_list.html', {'categories': categories})
 
-
-# @login_required
-# def maintenance_task_list(request):
-#     tasks = MaintenanceTask.objects.all().order_by('category')
-#     return render(request, 'vehicleApp/maintenance_task_list.html', {'tasks': tasks})
 
 
 

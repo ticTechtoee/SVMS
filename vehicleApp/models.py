@@ -78,25 +78,6 @@ class ServiceType(models.Model):
         return self.get_code_display()
 
 
-# Maintenance Task
-class MaintenanceTask(models.Model):
-    maintenance_type = models.ForeignKey(
-        MaintenanceType, on_delete=models.CASCADE, related_name='maintenance_tasks'
-    )
-    main_item = models.ForeignKey(
-        InspectionItem, on_delete=models.CASCADE, related_name='maintenance_tasks'
-    )
-    sub_item = models.ForeignKey(
-        SubInspectionItem, on_delete=models.CASCADE, related_name='maintenance_tasks'
-    )
-    service_type = models.ForeignKey(
-        ServiceType, on_delete=models.CASCADE, related_name='maintenance_tasks'
-    )
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.maintenance_type} - {self.main_item} - {self.sub_item} ({self.service_type})"
-
 
 class VehicleServiceRecord(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)

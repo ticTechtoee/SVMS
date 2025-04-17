@@ -1,13 +1,13 @@
 from django import forms
 from .models import (
-    Vehicle, VehicleServiceRecord, MaintenanceType, MaintenanceTask,
+    Vehicle, VehicleServiceRecord, MaintenanceType,
     InspectionItem, SubInspectionItem, ServiceType
 )
 from companyApp.models import Company
 from django.contrib.auth.models import User
 
 from django import forms
-from .models import MaintenanceType, InspectionItem, SubInspectionItem, ServiceType, Vehicle, VehicleServiceRecord, MaintenanceTask
+from .models import MaintenanceType, InspectionItem, SubInspectionItem, ServiceType, Vehicle, VehicleServiceRecord
 
 # vehicleApp/forms.py
 
@@ -75,19 +75,6 @@ class ServiceTypeForm(forms.ModelForm):
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Service Description'}),
         }
 
-
-# # Maintenance Task Form
-# class MaintenanceTaskForm(forms.ModelForm):
-#     class Meta:
-#         model = MaintenanceTask
-#         fields = ['maintenance_type', 'main_item', 'sub_item', 'service_type', 'description']
-#         widgets = {
-#             'maintenance_type': forms.Select(attrs={'class': 'form-control'}),
-#             'main_item': forms.Select(attrs={'class': 'form-control'}),
-#             'sub_item': forms.Select(attrs={'class': 'form-control'}),
-#             'service_type': forms.Select(attrs={'class': 'form-control'}),
-#             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter description'}),
-#         }
 
 class VehicleMileageForm(forms.Form):
     vehicle = forms.ModelChoiceField(
