@@ -79,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'reminderApp.context_processors.reminder_count', # To sohw reminder
+                'accountApp.context_processors.employee_company_context',  # To show the company at the mainp page
             ],
         },
     },

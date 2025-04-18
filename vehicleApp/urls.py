@@ -12,6 +12,7 @@ from .views import (
     generate_vehicle_qr,
     vehicle_list,
     update_vehicle_expiry,
+    delete_vehicle,
     maintenance_type_report,
 )
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path('create/', create_vehicle, name='create_vehicle'),
     path('vehicles/', vehicle_list, name='vehicle_list'),
     path('vehicle/<int:vehicle_id>/update-expiry/', update_vehicle_expiry, name='update_vehicle_expiry'),
+    path('vehicle/<int:vehicle_id>/delete-vehilce/', delete_vehicle, name='delete_vehicle'),
     path('select-vehicle/', select_vehicle_mileage, name='select_vehicle_mileage'),
     path('create-service-record/<int:vehicle_id>/<int:mileage>/<int:category_id>/', create_service_record_step2, name='create_service_record_step2'),
     path('generate-qr/<int:vehicle_id>/', generate_vehicle_qr, name='generate_vehicle_qr'),

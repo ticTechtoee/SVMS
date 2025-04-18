@@ -8,7 +8,9 @@ from django.contrib.auth.models import User
 
 from django import forms
 from .models import MaintenanceType, InspectionItem, SubInspectionItem, ServiceType, Vehicle, VehicleServiceRecord
+# forms.py
 
+from companyApp.models import Company
 # vehicleApp/forms.py
 
 class VehicleForm(forms.ModelForm):
@@ -76,14 +78,42 @@ class ServiceTypeForm(forms.ModelForm):
         }
 
 
+
+
 class VehicleMileageForm(forms.Form):
-    vehicle = forms.ModelChoiceField(
-        queryset=Vehicle.objects.all(),
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.all(),
+        required=False,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+
+    vehicle = forms.ModelChoiceField(
+        queryset=Vehicle.objects.none(),  # Initially empty
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     mileage_at_service = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Mileage'})
     )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        selected_company = kwargs.pop('selected_company', None)
+        super().__init__(*args, **kwargs)
+
+        # Show company dropdown only for superusers
+        if not user.is_superuser:
+            self.fields.pop('company')
+            from accountApp.models import Employee
+            try:
+                employee = Employee.objects.get(user=user)
+                self.fields['vehicle'].queryset = Vehicle.objects.filter(company=employee.company)
+            except Employee.DoesNotExist:
+                self.fields['vehicle'].queryset = Vehicle.objects.none()
+        else:
+            if selected_company:
+                self.fields['vehicle'].queryset = Vehicle.objects.filter(company=selected_company)
+
 
 
 class VehicleServiceRecordForm(forms.ModelForm):

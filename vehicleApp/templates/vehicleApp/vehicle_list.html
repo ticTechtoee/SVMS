@@ -30,7 +30,15 @@
                         <a href="{% url 'vehicleApp:update_vehicle_expiry' vehicle.id %}" class="btn btn-warning btn-sm">
                             Update Expiry Date
                         </a>
+
+                        <form action="{% url 'vehicleApp:delete_vehicle' vehicle.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this vehicle?');">
+                                Delete Vehicle
+                            </button>
+                        </form>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

@@ -5,7 +5,7 @@ from .models import Vehicle, VehicleServiceRecord, MaintenanceType
 from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm
 import io
 
-
+from companyApp.models import Company
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -24,6 +24,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import MaintenanceTypeForm, InspectionItemForm, SubInspectionItemForm, ServiceTypeForm
 from .models import MaintenanceType, InspectionItem, SubInspectionItem, ServiceType
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import MaintenanceType, VehicleServiceRecord
+import openpyxl
+from django.http import HttpResponse
 
 
 @login_required
@@ -86,26 +92,44 @@ def update_vehicle_expiry(request, vehicle_id):
 
 
 
+@login_required
+def delete_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    if request.method == "POST":
+        vehicle.delete()
+        return redirect('vehicleApp:vehicle_list')  # redirect to your vehicle list
+
+    # Optional: Handle invalid access via GET
+    return render(request, 'vehicleApp/invalid_delete_attempt.html')  # or redirect somewhere else
+
+
 
 @login_required
 def select_vehicle_mileage(request):
+    selected_company = None
     if request.method == "POST":
-        form = VehicleMileageForm(request.POST)
+        company_id = request.POST.get('company')
+        if request.user.is_superuser and company_id:
+            selected_company = Company.objects.get(id=company_id)
+
+        form = VehicleMileageForm(request.POST, user=request.user, selected_company=selected_company)
+
         if form.is_valid():
             vehicle = form.cleaned_data['vehicle']
             mileage = form.cleaned_data['mileage_at_service']
 
-            # Find the closest matching maintenance category based on mileage
             maintenance_category = MaintenanceType.objects.filter(
                 kilometer__lte=mileage
-            ).order_by('-kilometer').first()  # Get the closest lower or equal match
+            ).order_by('-kilometer').first()
 
             return redirect('vehicleApp:create_service_record_step2', vehicle.id, mileage, maintenance_category.id if maintenance_category else 0)
 
     else:
-        form = VehicleMileageForm()
+        form = VehicleMileageForm(user=request.user)
 
     return render(request, 'vehicleApp/select_vehicle_mileage.html', {'form': form})
+
 
 
 @login_required
@@ -136,17 +160,28 @@ def create_service_record_step2(request, vehicle_id, mileage, category_id):
 
 @login_required
 def service_record_list(request):
-    vehicles = Vehicle.objects.all()
-    selected_vehicle_id = request.GET.get('vehicle', None)
+    user = request.user
+    selected_vehicle_id = request.GET.get('vehicle')
 
-    records = VehicleServiceRecord.objects.filter(vehicle_id=selected_vehicle_id) if selected_vehicle_id else VehicleServiceRecord.objects.all()
+    # Admin: show all
+    if user.is_superuser:
+        vehicles = Vehicle.objects.all()
+        records = VehicleServiceRecord.objects.all()
+    else:
+        # Filter vehicles owned by the current user
+        vehicles = Vehicle.objects.filter(user=user)
+        # Filter service records for those vehicles only
+        records = VehicleServiceRecord.objects.filter(vehicle__user=user)
+
+    # Optional: further filter by selected vehicle
+    if selected_vehicle_id:
+        records = records.filter(vehicle_id=selected_vehicle_id)
 
     return render(request, 'vehicleApp/service_record_list.html', {
-        'records': records,
         'vehicles': vehicles,
+        'records': records,
         'selected_vehicle_id': selected_vehicle_id
     })
-
 
 @login_required
 def generate_vehicle_qr(request, vehicle_id):
@@ -229,14 +264,10 @@ def create_service_type(request):
 
 
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import MaintenanceType, VehicleServiceRecord
-import openpyxl
-from django.http import HttpResponse
 
 @login_required
 
+@login_required
 def maintenance_type_report(request):
     selected_type_id = request.GET.get('maintenance_type')
     maintenance_types = MaintenanceType.objects.all()
@@ -244,9 +275,18 @@ def maintenance_type_report(request):
 
     if selected_type_id:
         maintenance_type = MaintenanceType.objects.get(id=selected_type_id)
-        records = VehicleServiceRecord.objects.filter(
-            maintenance_type=maintenance_type
-        ).select_related('vehicle__company', 'vehicle__user', 'maintenance_type')
+
+        if request.user.is_superuser or request.user.is_staff:
+            # Admin: All records
+            records = VehicleServiceRecord.objects.filter(
+                maintenance_type=maintenance_type
+            ).select_related('vehicle__company', 'vehicle__user', 'maintenance_type')
+        else:
+            # Regular user: Only their own vehicle records
+            records = VehicleServiceRecord.objects.filter(
+                maintenance_type=maintenance_type,
+                vehicle__user=request.user
+            ).select_related('vehicle__company', 'vehicle__user', 'maintenance_type')
 
         # If exporting to Excel
         if 'export' in request.GET:

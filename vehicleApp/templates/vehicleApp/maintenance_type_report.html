@@ -2,6 +2,12 @@
 {% load static %}
 
 {% block content %}
+{% if not request.user.is_superuser and selected_type_id %}
+    <div class="alert alert-info">
+        You are viewing maintenance records for vehicles assigned to you.
+    </div>
+{% endif %}
+
 <div class="container mt-5">
     <h2 class="mb-4">Maintenance Type Report</h2>
 

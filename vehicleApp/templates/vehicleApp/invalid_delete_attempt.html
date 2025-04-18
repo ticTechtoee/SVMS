@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="text-danger">Invalid Request</h2>
+    <p>You cannot delete a vehicle using this method.</p>
+    <p>Please return to the <a href="{% url 'vehicleApp:vehicle_list' %}">vehicle list</a> and use the proper delete button.</p>
+    <img src="{% static 'images/error_warning.svg' %}" alt="Warning" style="width: 200px; margin-top: 20px;">
+</div>
+{% endblock %}
