@@ -1,4 +1,5 @@
 from .models import Vehicle, MaintenanceType
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceType
@@ -62,14 +63,18 @@ def vehicle_list(request):
         vehicles = Vehicle.objects.all()
         print("User is Admin")
     else:
-        # Get the company of the logged-in user
         try:
             employee = Employee.objects.get(user=request.user)
             vehicles = Vehicle.objects.filter(company=employee.company)
         except Employee.DoesNotExist:
             return redirect('dashboardApp:admin_dashboard')
 
-    return render(request, 'vehicleApp/vehicle_list.html', {'vehicles': vehicles})
+    # Apply pagination
+    paginator = Paginator(vehicles, 10)  # Show 10 vehicles per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'vehicleApp/vehicle_list.html', {'page_obj': page_obj})
 
 
 
