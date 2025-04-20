@@ -13,10 +13,31 @@
     <link rel="stylesheet" href="{% static '/assets/css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+    <style>
+        .background-logo-global {
+            position: fixed;
+            bottom: 50px; /* Increased spacing from the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            height: 350px;
+            background: url("{% static 'assets/images/logo.png' %}") no-repeat center center;
+            background-size: contain;
+            opacity: 0.08; /* Make it slightly more visible */
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #content {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
 
 </head>
 
 <body>
+    <div class="background-logo-global"></div>
 
     {% include 'navbar.html' %}
 

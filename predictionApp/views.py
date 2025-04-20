@@ -25,7 +25,7 @@ def load_data():
 
     data = []
     for record in records:
-        data.append([record.vehicle.id, record.mileage_at_service, record.maintenance_category.id])
+        data.append([record.vehicle.id, record.mileage_at_service, record.maintenance_type.id])
 
     df = pd.DataFrame(data, columns=["vehicle_id", "mileage", "category"])
 
