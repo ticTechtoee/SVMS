@@ -45,7 +45,7 @@ def create_vehicle(request):
                 vehicle.company = employee.company
             except Employee.DoesNotExist:
                 # fallback for superuser or error
-                return redirect('home:HomeView')  # or show an error message
+                return redirect('dashboardApp:admin_dashboard')  # or show an error message
 
             vehicle.save()
             return redirect('vehicleApp:vehicle_list')
@@ -67,7 +67,7 @@ def vehicle_list(request):
             employee = Employee.objects.get(user=request.user)
             vehicles = Vehicle.objects.filter(company=employee.company)
         except Employee.DoesNotExist:
-            return redirect('home:HomeView')
+            return redirect('dashboardApp:admin_dashboard')
 
     return render(request, 'vehicleApp/vehicle_list.html', {'vehicles': vehicles})
 

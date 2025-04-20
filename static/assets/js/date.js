@@ -1,0 +1,1 @@
+flatpickr("input[type=date]", {});

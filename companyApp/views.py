@@ -11,7 +11,7 @@ def create_company(request):
         form = CompanyForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home:HomeView')
+            return redirect('dashboardApp:admin_dashboard')
     else:
         form = CompanyForm()
 

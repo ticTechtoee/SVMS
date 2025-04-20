@@ -36,7 +36,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Auto-login after signup
-            return redirect('home:HomeView')  # Redirect to homepage
+            return redirect('dashboardApp:admin_dashboard')  # Redirect to homepage
     else:
         form = SignupForm()
     return render(request, 'accountApp/signup.html', {'form': form})
@@ -51,7 +51,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home:HomeView')  # Redirect to homepage
+                return redirect('dashboardApp:admin_dashboard')  # Redirect to homepage
     else:
         form = LoginForm()
     return render(request, 'accountApp/login.html', {'form': form})
@@ -104,7 +104,7 @@ def create_employee_view(request):
                 email_msg.send()
 
                 messages.success(request, f"Employee created and email sent to {email}.")
-                return redirect('home:HomeView')
+                return redirect('dashboardApp:admin_dashboard')
 
             except IntegrityError:
                 form.add_error('username', 'This username is already taken. Please choose a different one.')

@@ -12,7 +12,7 @@ environ.Env.read_env()
 LOGIN_URL = reverse_lazy('accountApp:login')  # Change this to the actual name of your login view
 
 # After login, redirect users to their dashboard or home page
-LOGIN_REDIRECT_URL = reverse_lazy('home:HomeView')  # Change this to your desired landing page
+LOGIN_REDIRECT_URL = reverse_lazy('dashboardApp:admin_dashboard')  # Change this to your desired landing page
 
 # After logout, redirect users back to the login page
 LOGOUT_REDIRECT_URL = reverse_lazy('accountApp:login')
@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home.apps.HomeConfig',
     'companyApp.apps.CompanyappConfig',
     'vehicleApp.apps.VehicleappConfig',
     'accountApp.apps.AccountappConfig',
