@@ -14,6 +14,7 @@ from .views import (
     update_vehicle_expiry,
     delete_vehicle,
     maintenance_type_report,
+    get_vehicles_by_company,
 )
 
 app_name = 'vehicleApp'
@@ -21,6 +22,7 @@ app_name = 'vehicleApp'
 urlpatterns = [
     path('create/', create_vehicle, name='create_vehicle'),
     path('vehicles/', vehicle_list, name='vehicle_list'),
+    path('ajax/get-vehicles/', get_vehicles_by_company, name='ajax_get_vehicles'),
     path('vehicle/<int:vehicle_id>/update-expiry/', update_vehicle_expiry, name='update_vehicle_expiry'),
     path('vehicle/<int:vehicle_id>/delete-vehilce/', delete_vehicle, name='delete_vehicle'),
     path('select-vehicle/', select_vehicle_mileage, name='select_vehicle_mileage'),

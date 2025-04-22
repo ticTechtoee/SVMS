@@ -31,6 +31,7 @@ from django.shortcuts import render
 from .models import MaintenanceType, VehicleServiceRecord
 import openpyxl
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 
 @login_required
@@ -110,11 +111,23 @@ def delete_vehicle(request, vehicle_id):
 
 
 
+
+@login_required
+def get_vehicles_by_company(request):
+    company_id = request.GET.get('company_id')
+    vehicles = Vehicle.objects.filter(company_id=company_id).values('id', 'registration_number')
+    return JsonResponse(list(vehicles), safe=False)
+
+
+
+
 @login_required
 def select_vehicle_mileage(request):
     selected_company = None
+
     if request.method == "POST":
         company_id = request.POST.get('company')
+
         if request.user.is_superuser and company_id:
             selected_company = Company.objects.get(id=company_id)
 
@@ -128,12 +141,14 @@ def select_vehicle_mileage(request):
                 kilometer__lte=mileage
             ).order_by('-kilometer').first()
 
+
             return redirect('vehicleApp:create_service_record_step2', vehicle.id, mileage, maintenance_category.id if maintenance_category else 0)
 
     else:
         form = VehicleMileageForm(user=request.user)
 
     return render(request, 'vehicleApp/select_vehicle_mileage.html', {'form': form})
+
 
 
 
@@ -154,12 +169,11 @@ def create_service_record_step2(request, vehicle_id, mileage, category_id):
         form = VehicleServiceRecordForm(initial={
             'vehicle': vehicle,
             'mileage_at_service': mileage,
-            'maintenance_category': maintenance_category,
+            'maintenance_type': maintenance_category,
         })
 
+
     return render(request, 'vehicleApp/create_service_record.html', {'form': form})
-
-
 
 
 
@@ -267,10 +281,6 @@ def create_service_type(request):
     return render(request, 'vehicleApp/create_service_type.html', {'form': form})
 
 
-
-
-
-@login_required
 
 @login_required
 def maintenance_type_report(request):

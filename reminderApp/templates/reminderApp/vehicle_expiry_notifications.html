@@ -13,7 +13,7 @@
                         <tr>
                             <th scope="col">🚘 Vehicle</th>
                             <th scope="col">📢 Message</th>
-                            <th scope="col">📅 Date</th>
+                            <th scope="col">📅 Expiry Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -21,11 +21,11 @@
                         <tr>
                             <td class="fw-bold">{{ reminder.vehicle.registration_number }}</td>
                             <td>{{ reminder.message }}</td>
-                            <td>{{ reminder.created_at|date:"Y-m-d" }}</td>
+                            <td>{{ reminder.date }}</td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="3" class="text-center text-muted">No notifications available</td>
+                            <td colspan="3" class="text-center text-muted">No expiring vehicles found</td>
                         </tr>
                         {% endfor %}
                     </tbody>
