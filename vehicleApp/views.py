@@ -1,3 +1,9 @@
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.shortcuts import render
+import openpyxl
+from .models import VehicleServiceRecord, MaintenanceType, Vehicle
+from companyApp.models import Company
 from .models import Vehicle, MaintenanceType
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -5,7 +11,12 @@ from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceType
 from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm
 import io
-
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from .models import Vehicle
+from django.db.models import Q
+from datetime import datetime
 from companyApp.models import Company
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -315,6 +326,82 @@ def maintenance_type_report(request):
 
 
 
+
+@login_required
+def company_maintenance_report(request):
+    selected_company_id = request.GET.get('company')
+    selected_type_id = request.GET.get('maintenance_type')
+
+    companies = Company.objects.all()
+    maintenance_types = MaintenanceType.objects.all()
+    records = []
+
+    if selected_company_id:
+        filters = {'vehicle__company__id': selected_company_id}
+
+        if selected_type_id:
+            filters['maintenance_type__id'] = selected_type_id
+
+        if not request.user.is_superuser and not request.user.is_staff:
+            filters['vehicle__user'] = request.user
+
+        records = VehicleServiceRecord.objects.filter(**filters).select_related(
+            'vehicle__company', 'vehicle__user', 'maintenance_type'
+        )
+
+        if 'export' in request.GET:
+            return export_company_report(records, selected_company_id, selected_type_id)
+
+    return render(request, 'vehicleApp/company_maintenance_report.html', {
+        'companies': companies,
+        'maintenance_types': maintenance_types,
+        'records': records,
+        'selected_company_id': int(selected_company_id) if selected_company_id else None,
+        'selected_type_id': int(selected_type_id) if selected_type_id else None
+    })
+
+
+def export_company_report(records, company_id, maintenance_type_id):
+    from django.utils.text import slugify
+
+    company = Company.objects.get(id=company_id)
+    maintenance_type = MaintenanceType.objects.get(id=maintenance_type_id) if maintenance_type_id else None
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Company Maintenance Report"
+
+    ws.append([
+        "Vehicle", "Created By", "Company", "Mileage",
+        "Main Item", "Sub Item", "Service Type", "Mechanic"
+    ])
+
+    for record in records:
+        ws.append([
+            record.vehicle.registration_number,
+            record.vehicle.user.username,
+            record.vehicle.company.name,
+            f"{record.mileage_at_service} km",
+            record.main_item.name,
+            record.sub_item.name,
+            record.service_type.get_code_display(),
+            record.mechanic.username if record.mechanic else 'N/A'
+        ])
+
+    filename = f"{slugify(company.name)}"
+    if maintenance_type:
+        filename += f"_{slugify(maintenance_type.get_name_display())}"
+    filename += "_report.xlsx"
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+    return response
+
+
+
 def export_to_excel(records, maintenance_type):
     from django.utils.text import slugify
 
@@ -349,4 +436,128 @@ def export_to_excel(records, maintenance_type):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     wb.save(response)
     return response
+
+
+
+
+
+
+def export_to_excel(records, maintenance_type=None, company=None):
+    from django.utils.text import slugify
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Maintenance Report"
+
+    # Header
+    ws.append([
+        "Vehicle", "Created By", "Company", "Mileage",
+        "Main Item", "Sub Item", "Service Type", "Mechanic"
+    ])
+
+    for record in records:
+        ws.append([
+            record.vehicle.registration_number,
+            record.vehicle.user.username,
+            record.vehicle.company.name,
+            f"{record.mileage_at_service} km",
+            record.main_item.name,
+            record.sub_item.name,
+            record.service_type.get_code_display(),
+            record.mechanic.username if record.mechanic else 'N/A'
+        ])
+
+    filename_parts = []
+    if maintenance_type:
+        filename_parts.append(slugify(maintenance_type.get_name_display()))
+    if company:
+        filename_parts.append(slugify(company.name))
+
+    filename = "_".join(filename_parts or ["maintenance"]) + "_report.xlsx"
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+    return response
+
+@login_required
+def combined_maintenance_report(request):
+    selected_type_id = request.GET.get('maintenance_type')
+    selected_company_id = request.GET.get('company')
+
+    maintenance_types = MaintenanceType.objects.all()
+    companies = Company.objects.all()
+    records = VehicleServiceRecord.objects.select_related(
+        'vehicle__company', 'vehicle__user', 'maintenance_type',
+        'main_item', 'sub_item', 'service_type', 'mechanic'
+    )
+
+    # Filter access based on user role
+    if not (request.user.is_superuser or request.user.is_staff):
+        records = records.filter(vehicle__user=request.user)
+
+    # Safely apply filters
+    if selected_type_id and selected_type_id.isdigit():
+        records = records.filter(maintenance_type_id=int(selected_type_id))
+
+    if selected_company_id and selected_company_id.isdigit():
+        records = records.filter(vehicle__company_id=int(selected_company_id))
+
+    # Export logic
+    if 'export' in request.GET:
+        mt = MaintenanceType.objects.get(id=int(selected_type_id)) if selected_type_id and selected_type_id.isdigit() else None
+        company = Company.objects.get(id=int(selected_company_id)) if selected_company_id and selected_company_id.isdigit() else None
+        return export_to_excel(records, mt, company)
+
+    return render(request, 'vehicleApp/combined_maintenance_report.html', {
+        'maintenance_types': maintenance_types,
+        'companies': companies,
+        'records': records,
+        'selected_type_id': int(selected_type_id) if selected_type_id and selected_type_id.isdigit() else None,
+        'selected_company_id': int(selected_company_id) if selected_company_id and selected_company_id.isdigit() else None,
+    })
+
+
+def export_maintenance_report_pdf(request):
+    maintenance_type = request.GET.get('maintenance_type')
+    company_id = request.GET.get('company_id')
+    vehicle_id = request.GET.get('vehicle_id')
+
+    filters = Q()
+
+    if maintenance_type and maintenance_type.isdigit():
+        filters &= Q(maintenance_type_id=int(maintenance_type))
+
+    if vehicle_id and vehicle_id.isdigit():
+        filters &= Q(vehicle__id=int(vehicle_id))
+
+    elif company_id and company_id.isdigit():
+        filters &= Q(vehicle__company_id=int(company_id))
+
+    records = VehicleServiceRecord.objects.filter(filters).select_related('vehicle')
+
+    template_path = 'vehicleApp/maintenance_report_pdf.html'
+    context = {
+        'records': records,
+        'generated_at': datetime.now(),
+        'maintenance_type': maintenance_type,
+    }
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="maintenance_report.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('PDF generation error: %s' % pisa_status.err, status=500)
+    return response
+
+
+
+
+
 

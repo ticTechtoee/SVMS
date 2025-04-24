@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+        body {
+            font-family: 'DejaVu Sans', 'Noto Naskh Arabic', sans-serif;
+            direction: rtl;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 5px;
+            word-wrap: break-word;
+            vertical-align: top;
+            text-align: right;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+
+
+</head>
+<body>
+    <h2>Maintenance Report</h2>
+    <p><strong>Generated:</strong> {{ generated_at|date:"d-m-Y H:i" }}</p>
+    {% if maintenance_type %}<p><strong>Type:</strong> {{ maintenance_type }}</p>{% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Service</th>
+                <th>Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in records %}
+            <tr>
+                <td>{{ r.vehicle.vehicle_name }}</td>
+                <td>{{ r.maintenance_date|date:"d-m-Y" }}</td>
+                <td>{{ r.maintenance_type }}</td>
+                <td>{{ r.service_type }}</td>
+                <td>{{ r.remarks }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="5">No records found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Maintenance Report (Filtered)</h2>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="maintenanceTypeSelect" class="form-label">Maintenance Type</label>
+            <select name="maintenance_type" id="maintenanceTypeSelect" class="form-select">
+                <option value="">-- All Types --</option>
+                {% for type in maintenance_types %}
+                    <option value="{{ type.id }}" {% if selected_type_id == type.id %}selected{% endif %}>
+                        {{ type.get_name_display }} ({{ type.kilometer }} km)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="companySelect" class="form-label">Company</label>
+            <select name="company" id="companySelect" class="form-select">
+                <option value="">-- All Companies --</option>
+                {% for comp in companies %}
+                    <option value="{{ comp.id }}" {% if selected_company_id == comp.id %}selected{% endif %}>
+                        {{ comp.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Generate</button>
+        </div>
+
+        {% if records %}
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-success w-100" name="export" value="true">Export to Excel</button>
+        </div>
+        {% endif %}
+    </form>
+
+    {% if records %}
+    <div class="row mb-3">
+        <div class="col-md-2 offset-md-10">
+            <form method="get" action="{% url 'vehicleApp:export_maintenance_report_pdf' %}" target="_blank">
+                <input type="hidden" name="company_id" value="{{ selected_company_id }}">
+                <input type="hidden" name="maintenance_type" value="{{ selected_type_id }}">
+                <button type="submit" class="btn btn-danger w-100">Export to PDF</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if records %}
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Created By</th>
+                <th>Company</th>
+                <th>Mileage</th>
+                <th>Main Item</th>
+                <th>Sub Item</th>
+                <th>Service Type</th>
+                <th>Mechanic</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.vehicle.registration_number }}</td>
+                <td>{{ record.vehicle.user.username }}</td>
+                <td>{{ record.vehicle.company.name }}</td>
+                <td>{{ record.mileage_at_service }} km</td>
+                <td>{{ record.main_item.name }}</td>
+                <td>{{ record.sub_item.name }}</td>
+                <td>{{ record.service_type.get_code_display }}</td>
+                <td>{{ record.mechanic.username|default:"N/A" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif selected_type_id or selected_company_id %}
+        <div class="alert alert-warning">No matching records found.</div>
+    {% endif %}
+</div>
+{% endblock %}
