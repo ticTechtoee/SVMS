@@ -44,16 +44,18 @@
     {% if records %}
     <div class="row mb-3">
         <div class="col-md-2 offset-md-10">
-            <form method="get" action="{% url 'vehicleApp:export_maintenance_report_pdf' %}" target="_blank">
+            <form method="get" action="#" target="_blank">
                 <input type="hidden" name="company_id" value="{{ selected_company_id }}">
                 <input type="hidden" name="maintenance_type" value="{{ selected_type_id }}">
-                <button type="submit" class="btn btn-danger w-100">Export to PDF</button>
+                <button type="button" class="btn btn-danger w-100" onclick="downloadPDF()">Export to PDF</button>
+
             </form>
         </div>
     </div>
     {% endif %}
 
     {% if records %}
+    <div id="pdf-report-content">
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -82,8 +84,25 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% elif selected_type_id or selected_company_id %}
         <div class="alert alert-warning">No matching records found.</div>
     {% endif %}
 </div>
 {% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function downloadPDF() {
+        const element = document.getElementById('pdf-report-content');
+        const opt = {
+            margin:       0.5,
+            filename:     'maintenance_report.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+{% endblock scripts %}

@@ -29,14 +29,21 @@
         }
     </style>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </head>
 <body>
-    <h2>Maintenance Report</h2>
+    <div id="pdf-report-content">
+    <h2 class="mb-4">Maintenance Report (Filtered)</h2>
+
     <p><strong>Generated:</strong> {{ generated_at|date:"d-m-Y H:i" }}</p>
+    <p><strong>Maintenance Type:</strong> {{ selected_type_id }}</p>
+    <p><strong>Company:</strong> {{ selected_company_id }}</p>
+    <p><strong>Generated At:</strong> {{ now|date:"d-m-Y H:i" }}</p>
     {% if maintenance_type %}<p><strong>Type:</strong> {{ maintenance_type }}</p>{% endif %}
 
-    <table>
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Vehicle</th>
@@ -60,5 +67,23 @@
         {% endfor %}
         </tbody>
     </table>
+    <button type="button" class="btn btn-danger" onclick="downloadPDF()">Export to PDF</button>
+
+</div>
+
+<script>
+    function downloadPDF() {
+        const element = document.getElementById('pdf-report-content');
+        const opt = {
+            margin:       0.5,
+            filename:     'maintenance_report.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+
 </body>
 </html>

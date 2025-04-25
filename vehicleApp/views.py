@@ -520,43 +520,6 @@ def combined_maintenance_report(request):
     })
 
 
-def export_maintenance_report_pdf(request):
-    maintenance_type = request.GET.get('maintenance_type')
-    company_id = request.GET.get('company_id')
-    vehicle_id = request.GET.get('vehicle_id')
-
-    filters = Q()
-
-    if maintenance_type and maintenance_type.isdigit():
-        filters &= Q(maintenance_type_id=int(maintenance_type))
-
-    if vehicle_id and vehicle_id.isdigit():
-        filters &= Q(vehicle__id=int(vehicle_id))
-
-    elif company_id and company_id.isdigit():
-        filters &= Q(vehicle__company_id=int(company_id))
-
-    records = VehicleServiceRecord.objects.filter(filters).select_related('vehicle')
-
-    template_path = 'vehicleApp/maintenance_report_pdf.html'
-    context = {
-        'records': records,
-        'generated_at': datetime.now(),
-        'maintenance_type': maintenance_type,
-    }
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="maintenance_report.pdf"'
-
-    template = get_template(template_path)
-    html = template.render(context)
-
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('PDF generation error: %s' % pisa_status.err, status=500)
-    return response
-
-
 
 
 
