@@ -9,7 +9,8 @@ from django.shortcuts import render, get_object_or_404
 from vehicleApp.models import Vehicle, VehicleServiceRecord
 from django.http import HttpResponseForbidden
 
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -168,3 +169,42 @@ def vehicle_maintenance_detail(request, vehicle_id):
 def viewUserDetail(request):
     users = User.objects.all()  # Fetch all registered users
     return render(request, "dashboardApp/UserDetailView.html", {"users": users})
+
+
+
+
+def faq_view(request):
+    faqs = [
+        {"question": "When should I get my vehicle serviced?", "answer": "You should get your vehicle serviced every 5,000 to 10,000 kilometers or as per the manufacturer's recommendation."},
+        {"question": "What is preventive maintenance?", "answer": "Preventive maintenance includes regular inspections and servicing to avoid unexpected vehicle failures."},
+        {"question": "How can I tell if my brakes need attention?", "answer": "If you hear squealing or grinding noises while braking, or the brake pedal feels soft, it’s time for an inspection."},
+        {"question": "What are common signs of engine problems?", "answer": "Warning lights, unusual noises, poor fuel economy, or difficulty starting are signs of engine issues."},
+        {"question": "Why is regular oil change important?", "answer": "Oil lubricates the engine. Regular oil changes prevent engine damage and ensure smooth performance."},
+        {"question": "What is an emergency maintenance service?", "answer": "Emergency maintenance addresses sudden issues like engine failure, flat tire, or battery problems."},
+        {"question": "How often should I rotate my tires?", "answer": "Tire rotation is recommended every 8,000 to 10,000 kilometers to promote even wear."},
+        {"question": "How do I know if my battery is failing?", "answer": "Slow engine crank, dim lights, or dashboard warning lights are signs of a bad battery."},
+        {"question": "What does the check engine light mean?", "answer": "It indicates a problem with the engine or emission system; a professional should diagnose it."},
+        {"question": "What should I do if my vehicle overheats?", "answer": "Stop safely, turn off the engine, and call for assistance. Do not open the radiator cap when hot."},
+    ]
+
+    return render(request, 'dashboardApp/faqpage.html', {'faqs': faqs})
+
+def support_view(request):
+    success = False
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        user_email = request.user.email
+
+        full_message = f"Support message from {request.user.username} ({user_email}):\n\n{message}"
+
+        send_mail(
+            subject,
+            full_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.SUPPORT_EMAIL],  # 📢 Company owner's support email
+            fail_silently=False,
+        )
+        success = True
+
+    return render(request, 'dashboardApp/supportpage.html', {'success': success})

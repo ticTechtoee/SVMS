@@ -34,3 +34,9 @@ class EmployeeCreationForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+# forms.py
+class ForgotPasswordForm(forms.Form):
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'})
+    )

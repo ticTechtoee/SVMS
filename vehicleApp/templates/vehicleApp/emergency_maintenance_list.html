@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">List Emergency Maintenance</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Maintenance Type</th>
+                        <th>Mechanic</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for maintenance in vehicle_list %}
+                    <tr>
+                        <td>{{ maintenance.vehicle.registration_number }}</td>
+                        <td>{{ maintenance.description }}</td>
+
+                        <td>{{ maintenance.mechanic.username }}</td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if not vehicle_list %}
+            <div class="alert alert-warning" role="alert">
+                No emergency maintenance records found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

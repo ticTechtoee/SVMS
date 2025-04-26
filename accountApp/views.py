@@ -14,6 +14,8 @@ from accountApp.models import Employee
 import random
 import string
 
+from .forms import ForgotPasswordForm
+
 
 # Login View
 def login_view(request):
@@ -93,3 +95,41 @@ def create_user_view(request):
         form = EmployeeCreationForm()
 
     return render(request, 'accountApp/create_employee.html', {'form': form})
+
+
+def forgot_password_view(request):
+    if request.method == "POST":
+        form = ForgotPasswordForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            try:
+                user = User.objects.get(username=username)
+                new_password = generate_random_password()
+
+                user.set_password(new_password)
+                user.save()
+
+                # Send email
+                subject = "Password Reset Request"
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = [user.email]
+
+                html_content = render_to_string('accountApp/emails/password_reset_email.html', {
+                    'username': user.username,
+                    'new_password': new_password,
+                })
+                text_content = f"Username: {user.username}\nNew Password: {new_password}"
+
+                email_msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+                email_msg.attach_alternative(html_content, "text/html")
+                email_msg.send()
+
+                messages.success(request, "A new password has been sent to your email.")
+                return redirect('accountApp:login')
+
+            except User.DoesNotExist:
+                form.add_error('username', "No user found with that username.")
+    else:
+        form = ForgotPasswordForm()
+
+    return render(request, "accountApp/forgot_password.html", {'form': form})

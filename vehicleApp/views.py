@@ -8,7 +8,7 @@ from .models import Vehicle, MaintenanceType
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Vehicle, VehicleServiceRecord, MaintenanceType
+from .models import Vehicle, VehicleServiceRecord, MaintenanceType, EmergencyMaintenanceRecord
 from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm, EmergencyMaintenanceForm
 import io
 from django.template.loader import get_template
@@ -547,8 +547,13 @@ def emergency_maintenance_create(request):
             emergency_record = form.save(commit=False)  # Don't save yet
             emergency_record.mechanic = request.user    # Assign logged-in user
             emergency_record.save()                     # Now save
-            return redirect('vehicleApp:vehicle_list')   # Redirect after saving
+            return redirect('vehicleApp:emergency_maintenance_list')   # Redirect after saving
     else:
         form = EmergencyMaintenanceForm()
 
     return render(request, 'vehicleApp/emergency_maintenance_form.html', {'form': form})
+
+@login_required
+def emergency_maintenance_list(request):
+    vehicle_list = EmergencyMaintenanceRecord.objects.filter(mechanic = request.user)
+    return render(request, 'vehicleApp/emergency_maintenance_list.html', {'vehicle_list': vehicle_list})

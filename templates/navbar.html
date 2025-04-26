@@ -102,6 +102,8 @@
                             class="fas fa-clipboard-list"></i> Records List</a></li>
                 <li><a class="nav-link text-dark" href="{% url 'vehicleApp:maintenance_category_list' %}"><i
                             class="fas fa-clipboard-list"></i> Type List</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'vehicleApp:emergency_maintenance_list' %}"><i
+                                class="fas fa-clipboard-list"></i> Emergency Vehicle</a></li>
 
             </ul>
         </li>
@@ -119,8 +121,8 @@
                 <i class="fas fa-question-circle"></i> Help
             </a>
             <ul id="supportMenu" class="collapse list-unstyled ps-3">
-                <li><a class="nav-link text-dark" href="#"><i class="fas fa-info-circle"></i> FAQs</a></li>
-                <li><a class="nav-link text-dark" href="#"><i class="fas fa-headset"></i> Support</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'dashboardApp:faq' %}"><i class="fas fa-info-circle"></i> FAQs</a></li>
+                <li><a class="nav-link text-dark" href="{% url 'dashboardApp:support' %}"><i class="fas fa-headset"></i> Support</a></li>
             </ul>
         </li>
         <!-- Reminders Dropdown (Collapsible like Maintenance) -->
