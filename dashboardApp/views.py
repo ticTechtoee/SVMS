@@ -33,7 +33,9 @@ def is_admin(user):
 
 def is_company_admin(user):
     try:
+        print(user.employee.role)
         return user.employee.role == "company_admin"
+
     except Employee.DoesNotExist:
         return False
 
@@ -148,7 +150,7 @@ def vehicle_maintenance_detail(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
 
     # Ensure user can access only their vehicles
-    if not is_admin(request.user) and vehicle.user != request.user:
+    if not is_admin(request.user) and not is_company_admin(request.user):
         return HttpResponseForbidden("You do not have permission to view this vehicle's records.")
 
     maintenance_records = VehicleServiceRecord.objects.filter(vehicle=vehicle).select_related(

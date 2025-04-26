@@ -18,6 +18,8 @@
             </select>
         </div>
 
+        {% if user.is_superuser or user.is_staff %}
+        <!-- Show company select dropdown -->
         <div class="col-md-4">
             <label for="companySelect" class="form-label">Company</label>
             <select name="company" id="companySelect" class="form-select">
@@ -29,6 +31,8 @@
                 {% endfor %}
             </select>
         </div>
+    {% endif %}
+
 
         <div class="col-md-2 align-self-end">
             <button type="submit" class="btn btn-primary w-100">Generate</button>
@@ -72,7 +76,7 @@
         <tbody>
             {% for record in records %}
             <tr>
-                <td>{{ record.vehicle.registration_number }}</td>
+                <td><a href="{% url 'dashboardApp:vehicle_maintenance_detail' record.vehicle.id %}"> {{ record.vehicle.registration_number }}</a></td>
                 <td>{{ record.vehicle.user.username }}</td>
                 <td>{{ record.vehicle.company.name }}</td>
                 <td>{{ record.mileage_at_service }} km</td>

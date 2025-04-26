@@ -5,20 +5,6 @@ from django import forms
 from companyApp.models import Company
 
 
-class SignupForm(UserCreationForm):
-    email = forms.EmailField(
-        required=True, widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Email'})
-    )
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Username'}),
-            'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'}),
-            'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
-        }
-
 class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Username'})
@@ -27,12 +13,9 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'})
     )
 
-
-
-
 class EmployeeCreationForm(forms.Form):
     ROLE_CHOICES = [
-        ("admin", "Company Admin"),
+        ("company_admin", "Company Admin"),
         ("employee", "Employee"),
     ]
 

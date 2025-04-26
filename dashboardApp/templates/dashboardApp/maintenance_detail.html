@@ -1,14 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h4>Maintenance Records for {{ vehicle.registration_number }}</h4>
-        </div>
-        <div class="card-body">
-            {% if maintenance_records %}
-                <table class="table table-bordered">
+<div class="row mb-3">
+    <button type="button" class="btn btn-danger w-100" onclick="downloadPDF()">Export to PDF</button>
+</div>
+
+<div id="pdf-report-content"> <!-- ✅ This is the wrapper needed for PDF generation -->
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>Maintenance Records for {{ vehicle.registration_number }}</h4>
+            </div>
+            <div class="card-body">
+                {% if maintenance_records %}
+                <table class="table table-bordered" style="font-size: 11px;">
                     <thead>
                         <tr>
                             <th>Mileage at Service</th>
@@ -27,18 +33,107 @@
                             <td>{{ record.maintenance_type }}</td>
                             <td>{{ record.main_item }}</td>
                             <td>{{ record.sub_item }}</td>
-                            <td>{{ record.service_type }}</td>
-                            <td>{{ record.description }}</td>
-                            <td>{{ record.mechanic.username }}</td>
+                            <td>{{ record.service_type.get_code_display }}</td>
+                            <td style="white-space: pre-wrap;">{{ record.description }}</td>
+                            <td>{{ record.mechanic.username|default:"N/A" }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            {% else %}
-                <p>No maintenance records found for this vehicle.</p>
-            {% endif %}
+
+                {% else %}
+                    <p>No maintenance records found for this vehicle.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
+</div> <!-- ✅ End pdf-report-content -->
 
 {% endblock content %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- Load jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Load the custom font -->
+<script src="{% static 'assets/js/Adobe Arabic Regular-normal.js' %}"></script>
+
+<script>
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+        // Load and apply Arabic font
+        doc.addFileToVFS("AdobeArabic-Regular.ttf", AdobeArabicRegular);
+        doc.addFont("AdobeArabic-Regular.ttf", "AdobeArabic", "normal");
+        doc.setFont("AdobeArabic");
+        doc.setFontSize(10);
+
+        // Title
+        doc.setTextColor(0, 0, 0); // Black text
+        doc.setFontSize(14);
+        doc.text("Maintenance Records", 150, 15, { align: "center" });
+
+        doc.setFontSize(9); // Reset smaller font for table
+
+        const headers = [
+    "Mileage at Service",
+    "Category",
+    "Main Item",
+    "Sub Item",
+    "Service Type",
+    "Description",
+    "Performed By"
+                    ];
+
+                    // 🆕 Adjusted widths to fit the page
+                    const colWidths = [30, 45, 45, 35, 35, 55, 32];
+
+                    const startX = 10;
+                    let y = 25;
+                    const rowHeight = 10;
+                    let x = startX;
+
+                    // Draw table headers
+                    headers.forEach((header, i) => {
+                        doc.rect(x, y, colWidths[i], rowHeight); // Draw border
+                        doc.text(header, x + 2, y + 6); // Text inside
+                        x += colWidths[i];
+                    });
+
+                    y += rowHeight;
+
+
+        // Table body
+        const rows = document.querySelectorAll("#pdf-report-content tbody tr");
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll("td");
+            x = startX;
+
+            cells.forEach((cell, i) => {
+                const text = cell.innerText.trim();
+                const isArabic = /[\u0600-\u06FF]/.test(text);
+
+                doc.rect(x, y, colWidths[i], rowHeight); // Draw border
+                doc.text(text, x + (isArabic ? colWidths[i] - 2 : 2), y + 6, {
+                    align: isArabic ? 'right' : 'left',
+                    maxWidth: colWidths[i] - 4,
+                });
+
+                x += colWidths[i];
+            });
+
+            y += rowHeight;
+
+            if (y + rowHeight > 190) { // Page break
+                doc.addPage();
+                y = 20;
+            }
+        });
+
+        doc.save("maintenance_report.pdf");
+    }
+</script>
+{% endblock scripts %}

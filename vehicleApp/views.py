@@ -187,21 +187,28 @@ def create_service_record_step2(request, vehicle_id, mileage, category_id):
     return render(request, 'vehicleApp/create_service_record.html', {'form': form})
 
 
+from accountApp.models import Employee
 
 @login_required
 def service_record_list(request):
     user = request.user
     selected_vehicle_id = request.GET.get('vehicle')
 
-    # Admin: show all
     if user.is_superuser:
+        # Admin: show all
         vehicles = Vehicle.objects.all()
         records = VehicleServiceRecord.objects.all()
     else:
-        # Filter vehicles owned by the current user
-        vehicles = Vehicle.objects.filter(user=user)
-        # Filter service records for those vehicles only
-        records = VehicleServiceRecord.objects.filter(vehicle__user=user)
+        # Get the company via Employee model
+        employee = Employee.objects.filter(user=user).first()
+        if employee and employee.company:
+            company = employee.company
+            vehicles = Vehicle.objects.filter(company=company)
+            records = VehicleServiceRecord.objects.filter(vehicle__company=company)
+        else:
+            # If no company assigned, fallback to empty lists
+            vehicles = Vehicle.objects.none()
+            records = VehicleServiceRecord.objects.none()
 
     # Optional: further filter by selected vehicle
     if selected_vehicle_id:
@@ -212,6 +219,7 @@ def service_record_list(request):
         'records': records,
         'selected_vehicle_id': selected_vehicle_id
     })
+
 
 @login_required
 def generate_vehicle_qr(request, vehicle_id):
@@ -482,30 +490,40 @@ def export_to_excel(records, maintenance_type=None, company=None):
     wb.save(response)
     return response
 
+from accountApp.models import Employee
+
 @login_required
 def combined_maintenance_report(request):
+    user = request.user
     selected_type_id = request.GET.get('maintenance_type')
     selected_company_id = request.GET.get('company')
 
     maintenance_types = MaintenanceType.objects.all()
     companies = Company.objects.all()
+
     records = VehicleServiceRecord.objects.select_related(
         'vehicle__company', 'vehicle__user', 'maintenance_type',
         'main_item', 'sub_item', 'service_type', 'mechanic'
     )
 
-    # Filter access based on user role
-    if not (request.user.is_superuser or request.user.is_staff):
-        records = records.filter(vehicle__user=request.user)
+    if user.is_superuser or user.is_staff:
+        # ✅ Admins can filter any company
+        if selected_company_id and selected_company_id.isdigit():
+            records = records.filter(vehicle__company_id=int(selected_company_id))
+    else:
+        # ✅ Company Admin must only see their company's records
+        try:
+            employee = Employee.objects.get(user=user)
+            records = records.filter(vehicle__company=employee.company)
+            companies = [employee.company]  # Show only their company in dropdown
+            selected_company_id = str(employee.company.id)  # Force selected company
+        except Employee.DoesNotExist:
+            records = records.none()  # No records if user is not linked
 
-    # Safely apply filters
     if selected_type_id and selected_type_id.isdigit():
         records = records.filter(maintenance_type_id=int(selected_type_id))
 
-    if selected_company_id and selected_company_id.isdigit():
-        records = records.filter(vehicle__company_id=int(selected_company_id))
-
-    # Export logic
+    # Excel Export
     if 'export' in request.GET:
         mt = MaintenanceType.objects.get(id=int(selected_type_id)) if selected_type_id and selected_type_id.isdigit() else None
         company = Company.objects.get(id=int(selected_company_id)) if selected_company_id and selected_company_id.isdigit() else None
@@ -518,8 +536,6 @@ def combined_maintenance_report(request):
         'selected_type_id': int(selected_type_id) if selected_type_id and selected_type_id.isdigit() else None,
         'selected_company_id': int(selected_company_id) if selected_company_id and selected_company_id.isdigit() else None,
     })
-
-
 
 
 

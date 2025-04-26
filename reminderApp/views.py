@@ -1,4 +1,10 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render
+from django.utils.timezone import now
+from datetime import timedelta
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from vehicleApp.models import Vehicle
 
 # Create your views here.
 from django.shortcuts import render, redirect
@@ -19,11 +25,6 @@ def mark_reminder_completed(request, reminder_id):
     reminder.save()
     return redirect('reminderApp:reminder_list')
 
-from django.utils.timezone import now
-from datetime import timedelta
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from vehicleApp.models import Vehicle
 
 
 def get_user_company(user):
@@ -42,10 +43,13 @@ def get_user_company(user):
 @login_required
 def vehicle_expiry_notifications(request):
     today = now().date()
-    if not request.user.is_superuser:
+    vehicles = None
+
+    if request.user.is_superuser:
+        vehicles = Vehicle.objects.all()
+    else:
         company = get_user_company(request.user)
         vehicles = Vehicle.objects.filter(company=company)
-
 
     expiring_vehicles = []
     for vehicle in vehicles:
@@ -56,8 +60,13 @@ def vehicle_expiry_notifications(request):
                 'date': vehicle.expiry_date,
             })
 
+    # 🚀 Pagination
+    paginator = Paginator(expiring_vehicles, 10)  # Show 10 vehicles per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'reminderApp/vehicle_expiry_notifications.html', {
-        'reminders': expiring_vehicles
+        'page_obj': page_obj,
     })
 
 

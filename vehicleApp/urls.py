@@ -25,7 +25,6 @@ urlpatterns = [
     path('vehicles/', vehicle_list, name='vehicle_list'),
     path('ajax/get-vehicles/', get_vehicles_by_company, name='ajax_get_vehicles'),
     path('combined-maintenance-report/', combined_maintenance_report, name='combined_maintenance_report'),
-    # path('export-maintenance-report-pdf/', export_maintenance_report_pdf, name='export_maintenance_report_pdf'),
     path('vehicle/<int:vehicle_id>/update-expiry/', update_vehicle_expiry, name='update_vehicle_expiry'),
     path('vehicle/<int:vehicle_id>/delete-vehilce/', delete_vehicle, name='delete_vehicle'),
     path('select-vehicle/', select_vehicle_mileage, name='select_vehicle_mileage'),
