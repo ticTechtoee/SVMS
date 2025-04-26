@@ -167,4 +167,4 @@ def vehicle_maintenance_detail(request, vehicle_id):
 @login_required
 def viewUserDetail(request):
     users = User.objects.all()  # Fetch all registered users
-    return render(request, "home/UserDetailView.html", {"users": users})
+    return render(request, "dashboardApp/UserDetailView.html", {"users": users})

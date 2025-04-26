@@ -16,6 +16,7 @@ from .views import (
     maintenance_type_report,
     get_vehicles_by_company,
     combined_maintenance_report,
+    emergency_maintenance_create
 )
 
 app_name = 'vehicleApp'
@@ -42,6 +43,7 @@ urlpatterns = [
     path('maintenance/category/list/', maintenance_category_list, name='maintenance_category_list'),
 
     path('maintenance/report/', maintenance_type_report, name='maintenance_type_report'),
+    path('maintenance/emergency-record/', emergency_maintenance_create, name='emergency_maintenance_create'),
 
 
 ]

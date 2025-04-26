@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Vehicle, VehicleServiceRecord, MaintenanceType
-from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm
+from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, VehicleExpiryUpdateForm, EmergencyMaintenanceForm
 import io
 from django.template.loader import get_template
 from django.http import HttpResponse
@@ -44,6 +44,7 @@ import openpyxl
 from django.http import HttpResponse
 from django.http import JsonResponse
 
+from accountApp.models import Employee
 
 @login_required
 def create_vehicle(request):
@@ -490,7 +491,7 @@ def export_to_excel(records, maintenance_type=None, company=None):
     wb.save(response)
     return response
 
-from accountApp.models import Employee
+
 
 @login_required
 def combined_maintenance_report(request):
@@ -538,5 +539,16 @@ def combined_maintenance_report(request):
     })
 
 
+@login_required
+def emergency_maintenance_create(request):
+    if request.method == 'POST':
+        form = EmergencyMaintenanceForm(request.POST)
+        if form.is_valid():
+            emergency_record = form.save(commit=False)  # Don't save yet
+            emergency_record.mechanic = request.user    # Assign logged-in user
+            emergency_record.save()                     # Now save
+            return redirect('vehicleApp:vehicle_list')   # Redirect after saving
+    else:
+        form = EmergencyMaintenanceForm()
 
-
+    return render(request, 'vehicleApp/emergency_maintenance_form.html', {'form': form})

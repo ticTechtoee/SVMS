@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-6">
                 <label for="vehicleSelect" class="form-label">Select Vehicle:</label>
-                <select name="vehicle" id="vehicleSelect" class="form-select" onchange="this.form.submit()">
+                <select name="vehicle" id="id_vehicle" class="form-select" onchange="this.form.submit()">
                     <option value="">-- All Vehicles --</option>
                     {% for vehicle in vehicles %}
                         <option value="{{ vehicle.id }}" {% if selected_vehicle_id == vehicle.id|stringformat:"s" %}selected{% endif %}>
@@ -66,3 +66,19 @@
 </div>
 
 {% endblock %}
+{% block scripts %}
+<!-- Load Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#id_vehicle').select2({
+        placeholder: 'Select or search vehicle...',
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
+{% endblock scripts %}
+

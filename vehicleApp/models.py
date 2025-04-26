@@ -102,3 +102,10 @@ class VehicleServiceRecord(models.Model):
 
 
 
+class EmergencyMaintenanceRecord(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    description = models.TextField()
+    mechanic = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.vehicle.registration_number} - {self.date} - {self.mechanic.username if self.mechanic else 'Unknown'}"

@@ -1,13 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Select Vehicle & Enter Mileage</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Next</button>
-  </form>
+  <div class="container mt-5">
+    <h2>Select Vehicle & Enter Mileage</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Next</button>
+    </form>
+
+    <hr class="my-4">
+
+    <!-- Add emergency maintenance button -->
+    <a href="{% url 'vehicleApp:emergency_maintenance_create' %}" class="btn btn-danger">
+      Report Emergency Maintenance
+    </a>
+  </div>
 {% endblock %}
+
 
 {% block scripts %}
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
