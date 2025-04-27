@@ -13,7 +13,6 @@ from .forms import VehicleForm, VehicleServiceRecordForm, VehicleMileageForm, Ve
 import io
 from django.template.loader import get_template
 from django.http import HttpResponse
-from xhtml2pdf import pisa
 from .models import Vehicle
 from django.db.models import Q
 from datetime import datetime
