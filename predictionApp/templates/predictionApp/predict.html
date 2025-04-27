@@ -35,19 +35,20 @@
         <p>
             The next service is expected at
             <strong>{{ next_service_mileage }} km
-                {% if next_service_mileage <= 5000 %}
+                {% if next_service_mileage >= 5000 and next_service_mileage < 25000 %}
                     (صیانہ و قائیہ)
-                {% elif next_service_mileage <= 10000 %}
+                {% elif next_service_mileage >= 10000 and next_service_mileage < 50000 %}
                     (صیانہ متوسطہ)
-                {% elif next_service_mileage <= 20000 %}
+                {% elif next_service_mileage >= 20000 and next_service_mileage < 120000 %}
                     (صیانہ شاملہ 1)
-                {% elif next_service_mileage <= 40000 %}
+                {% elif next_service_mileage >= 40000 and next_service_mileage < 80000 %}
                     (صیانہ شاملہ 2)
                 {% endif %}
             </strong>.
         </p>
     </div>
-{% endif %}
+    {% endif %}
+
 
 </div>
 
