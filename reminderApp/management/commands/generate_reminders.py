@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from datetime import date
-from vehicleApp.models import VehicleServiceRecord, Vehicle, MaintenanceCategory
+from vehicleApp.models import VehicleServiceRecord, Vehicle, MaintenanceType
 from reminderApp.models import Reminder
 
 # Predefined maintenance intervals
@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
             if last_service:
                 last_mileage = last_service.mileage_at_service
-                category_code = last_service.maintenance_category.name  # A, B, C, or D
+                category_code = last_service.maintenance_type.name  # ✅ Correct field now!
 
                 if category_code in MAINTENANCE_MILESTONES:
                     milestones = MAINTENANCE_MILESTONES[category_code]
@@ -36,7 +36,7 @@ class Command(BaseCommand):
                             reminder_date=today,
                             type=Reminder.SERVICE,
                             status=Reminder.PENDING,
-                            defaults={'description': f"Next service at {next_milestone} km"},
                         )
+
 
         self.stdout.write(self.style.SUCCESS("Maintenance reminders updated successfully!"))

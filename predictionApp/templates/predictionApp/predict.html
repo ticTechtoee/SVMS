@@ -32,9 +32,23 @@
     {% if next_service_mileage %}
     <div class="alert alert-info mt-4">
         <h5>Prediction Result</h5>
-        <p>The next service is expected at <strong>{{ next_service_mileage }} km</strong>.</p>
+        <p>
+            The next service is expected at
+            <strong>{{ next_service_mileage }} km
+                {% if next_service_mileage <= 5000 %}
+                    (صیانہ و قائیہ)
+                {% elif next_service_mileage <= 10000 %}
+                    (صیانہ متوسطہ)
+                {% elif next_service_mileage <= 20000 %}
+                    (صیانہ شاملہ 1)
+                {% elif next_service_mileage <= 40000 %}
+                    (صیانہ شاملہ 2)
+                {% endif %}
+            </strong>.
+        </p>
     </div>
-    {% endif %}
+{% endif %}
+
 </div>
 
 {% endblock content %}
